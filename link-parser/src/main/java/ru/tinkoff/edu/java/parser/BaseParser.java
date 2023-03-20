@@ -1,0 +1,25 @@
+package ru.tinkoff.edu.java.parser;
+
+import ru.tinkoff.edu.java.response.BaseResponse;
+
+import java.util.Optional;
+
+public abstract class BaseParser implements Parser {
+    private BaseParser next;
+
+    public static BaseParser chain(BaseParser first, BaseParser... chain) {
+        var head = first;
+        for (var nextInChain : chain) {
+            head.next = nextInChain;
+            head = nextInChain;
+        }
+        return first;
+    }
+
+    protected Optional<BaseResponse> parseNext(String text) {
+        if (next == null) {
+            return Optional.empty();
+        }
+        return next.parse(text);
+    }
+}

@@ -12,11 +12,12 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) {
         // P.s. Знаю, что класс бесполезный :) Но проверить же как-то нужно было
+        // Я его удалю потом, чтобы можно было спокойно инжектить как URL, так и цепочку
 
         var parser = BaseParser.chain(new GitHubParser(), new StackOverflowParser());
-
+        var scanner = new Scanner(System.in);
         while (true) {
-            String url = new Scanner(System.in).nextLine();
+            var url = scanner.nextLine();
             Optional<BaseResponse> response = parser.parse(url);
             if (response.isPresent()) {
                 System.out.println(response);

@@ -5,9 +5,9 @@ import ru.tinkoff.edu.java.response.BaseResponse;
 import java.util.Optional;
 
 public abstract class BaseParser implements Parser {
-    private BaseParser next;
+    private Parser next;
 
-    public static BaseParser chain(BaseParser first, BaseParser... chain) {
+    public static Parser chain(BaseParser first, BaseParser... chain) {
         var head = first;
         for (var nextInChain : chain) {
             head.next = nextInChain;

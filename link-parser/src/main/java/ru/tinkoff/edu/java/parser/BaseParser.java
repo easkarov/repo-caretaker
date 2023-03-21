@@ -17,9 +17,6 @@ public abstract class BaseParser implements Parser {
     }
 
     protected Optional<BaseResponse> parseNext(String text) {
-        if (next == null) {
-            return Optional.empty();
-        }
-        return next.parse(text);
+        return (next == null) ? Optional.empty() : next.parse(text);
     }
 }

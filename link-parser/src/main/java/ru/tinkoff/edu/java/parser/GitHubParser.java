@@ -6,7 +6,7 @@ import ru.tinkoff.edu.java.response.GitHubResponse;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class GitHubParser extends BaseParser {
+public class GitHubParser extends LinkChainParser {
     private static final String USER_REPO_REGEX = "^https://github.com/([\\w.-]+)/([\\w.-]+)(/|$)";
 
     @Override

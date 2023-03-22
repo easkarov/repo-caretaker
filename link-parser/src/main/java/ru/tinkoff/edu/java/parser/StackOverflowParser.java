@@ -6,7 +6,7 @@ import ru.tinkoff.edu.java.response.StackOverflowResponse;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-public class StackOverflowParser extends BaseParser {
+public class StackOverflowParser extends LinkChainParser {
     private static final String QID_REGEX = "^https://stackoverflow\\.com/questions/(\\d+)(/|$)";
 
     @Override

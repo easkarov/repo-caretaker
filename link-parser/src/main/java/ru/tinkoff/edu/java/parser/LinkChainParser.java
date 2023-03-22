@@ -4,10 +4,10 @@ import ru.tinkoff.edu.java.response.BaseResponse;
 
 import java.util.Optional;
 
-public abstract class BaseParser implements Parser {
-    private Parser next;
+public abstract class LinkChainParser implements LinkParser {
+    private LinkParser next;
 
-    public static Parser chain(BaseParser first, BaseParser... chain) {
+    public static LinkParser chain(LinkChainParser first, LinkChainParser... chain) {
         var head = first;
         for (var nextInChain : chain) {
             head.next = nextInChain;

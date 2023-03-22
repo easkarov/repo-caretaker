@@ -1,6 +1,6 @@
 package ru.tinkoff.edu.java;
 
-import ru.tinkoff.edu.java.parser.BaseParser;
+import ru.tinkoff.edu.java.parser.LinkChainParser;
 import ru.tinkoff.edu.java.parser.GitHubParser;
 import ru.tinkoff.edu.java.parser.StackOverflowParser;
 import ru.tinkoff.edu.java.response.BaseResponse;
@@ -14,7 +14,7 @@ public class App {
         // P.s. Знаю, что класс бесполезный :) Но проверить же как-то нужно было
         // Я его удалю потом, чтобы можно было спокойно инжектить как URL, так и цепочку
 
-        var parser = BaseParser.chain(new GitHubParser(), new StackOverflowParser());
+        var parser = LinkChainParser.chain(new GitHubParser(), new StackOverflowParser());
         var scanner = new Scanner(System.in);
         while (true) {
             var url = scanner.nextLine();

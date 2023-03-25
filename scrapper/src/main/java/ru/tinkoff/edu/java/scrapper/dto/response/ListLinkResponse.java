@@ -1,9 +1,9 @@
 package ru.tinkoff.edu.java.scrapper.dto.response;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public record ListLinkResponse(
-        ArrayList<LinkResponse> links,
+        List<LinkResponse> links,
         int size
 ) {
 }

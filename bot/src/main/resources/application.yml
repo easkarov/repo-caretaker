@@ -3,3 +3,8 @@ app:
 
 server:
   port: 8000
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui

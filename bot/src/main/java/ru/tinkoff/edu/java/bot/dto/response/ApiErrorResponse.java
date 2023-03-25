@@ -1,7 +1,10 @@
-package ru.tinkoff.edu.java.bot.dto;
+package ru.tinkoff.edu.java.bot.dto.response;
+
+import lombok.Builder;
 
 import java.util.ArrayList;
 
+@Builder
 public record ApiErrorResponse(
     String description,
     String code,

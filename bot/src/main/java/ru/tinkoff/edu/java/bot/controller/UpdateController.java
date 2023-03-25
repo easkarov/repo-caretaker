@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.tinkoff.edu.java.bot.dto.LinkUpdate;
 
 @RestController
-@RequestMapping("/bot/api")
+@RequestMapping("/api/updates")
 public class UpdateController {
 
-    @PostMapping( path = "/updates")
-    public ResponseEntity<String> createUpdate(@RequestBody(required = false) LinkUpdate update) {
-        System.out.println(update);
-        return ResponseEntity.ok().body("Обновление обработано");
+    @PostMapping
+    public ResponseEntity<String> createUpdate(@RequestBody LinkUpdate update) {
+        return ResponseEntity.ok().body("Обновление (%s) обработано".formatted(update.id()));
     }
 }

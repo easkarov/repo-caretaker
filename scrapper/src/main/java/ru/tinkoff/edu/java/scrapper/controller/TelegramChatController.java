@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-public class TGChatController {
+public class TelegramChatController {
 
     @PostMapping(path = "/tg-chat/{id}")
     public ResponseEntity<String> registerChat(@PathVariable(name = "id") long id) {
@@ -15,8 +15,11 @@ public class TGChatController {
     }
 
     @DeleteMapping(path = "/tg-chat/{id}")
-    public ResponseEntity<Object> deleteChat(@PathVariable(name = "id") long id) {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> deleteChat(@PathVariable(name = "id") long id) {
+
+        // TODO: Handle "chat not found" exception
+
+        return ResponseEntity.ok().body("Чат (%s) успешно удалён".formatted(id));
 
     }
 

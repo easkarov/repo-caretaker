@@ -1,7 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.controller;
 
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -10,16 +9,16 @@ import org.springframework.web.bind.annotation.*;
 public class TelegramChatController {
 
     @PostMapping(path = "/tg-chat/{id}")
-    public ResponseEntity<String> registerChat(@PathVariable(name = "id") long id) {
-        return ResponseEntity.ok().body("Чат зарегистрирован");
+    public String registerChat(@PathVariable(name = "id") long id) {
+        return "Чат зарегистрирован"; // stub
     }
 
     @DeleteMapping(path = "/tg-chat/{id}")
-    public ResponseEntity<String> deleteChat(@PathVariable(name = "id") long id) {
+    public String deleteChat(@PathVariable(name = "id") long id) {
 
         // TODO: Handle "chat not found" exception
 
-        return ResponseEntity.ok().body("Чат (%s) успешно удалён".formatted(id));
+        return "Чат (%s) успешно удалён".formatted(id);  // stub
 
     }
 

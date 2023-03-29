@@ -15,7 +15,8 @@ public class MessageHandler {
     public final HelpCommand helpCommand;
     public final Sender sender;
 
-    // NEEDS REFACTORING
+    // needs refactoring
+    // handling only 1-level depth context
     public HandledUpdate handle(Update update, State state) {
         BaseRequest<?, ?> request;
         State newState = State.NONE;

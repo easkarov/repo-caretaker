@@ -1,5 +1,6 @@
 app:
   test: 777
+  bot-token: ${BOT_TOKEN}
 
 server:
   port: 8000

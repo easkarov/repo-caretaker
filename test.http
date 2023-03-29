@@ -1,15 +1,28 @@
 ###
 
-POST http://localhost:8000/bot/api/updates
+POST http://localhost:8000/api/updates
+Content-Type: application/json
+
+{"id":  123, "tgChatIds":  []}
+
+###
+
+POST http://localhost:8080/api/tg-chat/123
 Content-Type: application/json
 
 //{"id":  "123", "tgChatIds":  [1, 2]}
 
 ###
 
-POST http://localhost:8080/scrapper/api/tg-chat/123sdf
+
+POST http://localhost:8000/api/updates
 Content-Type: application/json
 
-//{"id":  "123", "tgChatIds":  [1, 2]}
+{}
+
 
 ###
+
+POST http://localhost:8080/api/links
+Content-Type: application/json
+Tg-Chat-Id: 1df

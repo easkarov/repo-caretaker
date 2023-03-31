@@ -19,22 +19,16 @@ public class CommandHandler {
     public final List<Command<?, ?>> commands;
     public final HelpCommand helpCommand;
 
-    public Optional<Command<?, ?>> getCommand(String name) {
-        return commands
-                .stream()
-                .filter(command -> command.name().equals(name))
-                .findFirst();
-    }
-
     public List<Command<?, ?>> getCommands() {
         return commands;
     }
 
-    public Optional<Command<?, ?>> findCommand(Update update) {
+    public Command<?, ?> findCommand(Update update) {
         return commands
                 .stream()
                 .filter(command -> command.canHandle(update))
-                .findFirst();
+                .findFirst()
+                .orElse(helpCommand);
     }
 
     public HandledUpdate handle(Update update) {
@@ -50,8 +44,8 @@ public class CommandHandler {
 
         var foundCommand = findCommand(update);
         return HandledUpdate.builder()
-                .request(foundCommand.map(command -> command.handle(update)))
-                .newState(foundCommand.map(Command::state).orElse(State.NONE))
+                .request(Optional.of(foundCommand.handle(update)))
+                .newState(foundCommand.state())
                 .build();
     }
 }

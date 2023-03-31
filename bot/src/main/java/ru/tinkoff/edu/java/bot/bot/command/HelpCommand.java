@@ -15,7 +15,7 @@ import ru.tinkoff.edu.java.bot.bot.State;
 @Component
 @RequiredArgsConstructor
 public class HelpCommand implements Command<SendMessage, SendResponse> {
-    private final Sender sender;
+    private final Sender messageSender;
     private final CommandHandler commandHandler;
 
     @Override
@@ -39,8 +39,7 @@ public class HelpCommand implements Command<SendMessage, SendResponse> {
         var commandsString = commandHandler
                 .getCommands()
                 .stream()
-                .map(Command::toString)
-                ;
-        return sender.send(update, "You chose /help command");
+                .map(Command::toString);
+        return messageSender.send(update, "You chose /help command");
     }
 }

@@ -2,7 +2,6 @@ package ru.tinkoff.edu.java.bot.bot.command;
 
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.BaseRequest;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,7 @@ import ru.tinkoff.edu.java.bot.bot.State;
 @Component
 @RequiredArgsConstructor
 public class LinkCommand implements Command<SendMessage, SendResponse> {
-    private final Sender sender;
+    private final Sender messageSender;
 
     @Override
     public String name() {
@@ -32,7 +31,7 @@ public class LinkCommand implements Command<SendMessage, SendResponse> {
     }
 
     @Override
-    public BaseRequest<SendMessage, SendResponse> handle(Update update) {
-        return sender.send(update, "You chose /link command");
+    public SendMessage handle(Update update) {
+        return messageSender.send(update, "You chose /link command");
     }
 }

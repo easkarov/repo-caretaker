@@ -13,7 +13,7 @@ import java.util.Optional;
 public class MessageHandler {
     public final CommandHandler commandHandler;
     public final HelpCommand helpCommand;
-    public final Sender sender;
+    public final Sender messageSender;
 
     // needs refactoring
     // handling only 1-level depth context
@@ -21,9 +21,9 @@ public class MessageHandler {
         BaseRequest<?, ?> request;
         State newState = State.NONE;
         if (state == State.TRACK_LINK) {
-            request = sender.send(update, "Okay, I will process your Link, thanks!");
+            request = messageSender.send(update, "Okay, I will process your Link, thanks!");
         } else {
-            request = sender.send(update, "Use /help lol");
+            request = messageSender.send(update, "Use /help lol");
         }
 
         return HandledUpdate.builder()

@@ -1,7 +1,6 @@
 package ru.tinkoff.edu.java.bot.bot;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.BaseRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.tinkoff.edu.java.bot.bot.command.Command;
@@ -14,7 +13,7 @@ import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
-public class CommandManager {
+public class CommandHandler {
     private final Pattern COMMAND_REGEX = Pattern.compile("/(.+)");
 
     public final List<Command<?, ?>> commands;

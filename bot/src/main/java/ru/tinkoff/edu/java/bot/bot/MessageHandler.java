@@ -11,7 +11,7 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class MessageHandler {
-    public final CommandManager commandManager;
+    public final CommandHandler commandHandler;
     public final HelpCommand helpCommand;
     public final Sender sender;
 

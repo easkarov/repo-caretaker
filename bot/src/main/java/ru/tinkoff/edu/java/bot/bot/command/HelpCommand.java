@@ -7,7 +7,7 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.bot.bot.CommandManager;
+import ru.tinkoff.edu.java.bot.bot.CommandHandler;
 import ru.tinkoff.edu.java.bot.bot.Sender;
 import ru.tinkoff.edu.java.bot.bot.State;
 
@@ -16,7 +16,7 @@ import ru.tinkoff.edu.java.bot.bot.State;
 @RequiredArgsConstructor
 public class HelpCommand implements Command<SendMessage, SendResponse> {
     private final Sender sender;
-    private final CommandManager commandManager;
+    private final CommandHandler commandHandler;
 
     @Override
     public String name() {
@@ -36,7 +36,7 @@ public class HelpCommand implements Command<SendMessage, SendResponse> {
     @Override
     public BaseRequest<SendMessage, SendResponse> handle(Update update) {
 
-        var commandsString = commandManager
+        var commandsString = commandHandler
                 .getCommands()
                 .stream()
                 .map(Command::toString)

@@ -5,18 +5,16 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/tg-chat")
 public class TelegramChatController {
 
-    @PostMapping(path = "/tg-chat/{id}")
+    @PostMapping(path = "/{id}")
     public String registerChat(@PathVariable(name = "id") long id) {
         return "Чат зарегистрирован"; // stub
     }
 
-    @DeleteMapping(path = "/tg-chat/{id}")
+    @DeleteMapping(path = "/{id}")
     public String deleteChat(@PathVariable(name = "id") long id) {
-
-        // TODO: Handle "chat not found" exception
 
         return "Чат (%s) успешно удалён".formatted(id);  // stub
 

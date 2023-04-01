@@ -19,5 +19,5 @@ github-client:
 
 stackoverflow-client:
   base-url: https://api.stackexchange.com/2.3
-#  api-key: ${STACKOVERFLOW_API_KEY}
+  api-key: ${STACKOVERFLOW_API_KEY}
 

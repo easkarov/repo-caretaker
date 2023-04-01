@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.bot;
+package ru.tinkoff.edu.java.bot.bot.meta;
 
 
 /**

@@ -9,9 +9,9 @@ import ru.tinkoff.edu.java.bot.client.ScrapperClient;
 @Configuration
 @RequiredArgsConstructor
 public class ClientConfiguration {
-    ApplicationConfig applicationConfig;
+    private final ApplicationConfig applicationConfig;
     @Bean
-    public ScrapperClient stackOverflowClient() {
+    public ScrapperClient scrapperClient() {
         // Создаётся клиент с базовой URL из файла конфига (есть значение по умолчанию @DefaultValue)
         return new ScrapperClient(applicationConfig.client().url());
     }

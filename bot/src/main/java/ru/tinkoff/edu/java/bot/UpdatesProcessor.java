@@ -35,7 +35,7 @@ public class UpdatesProcessor implements UpdatesListener {
             }
 
             Long userId = update.message().from().id();
-            State state = userStates.get(userId);
+            State state = userStates.getOrDefault(userId, State.NONE);
 
             HandledUpdate handledUpdate = commandsHandler.handle(update);
             if (handledUpdate.request().isPresent()) {

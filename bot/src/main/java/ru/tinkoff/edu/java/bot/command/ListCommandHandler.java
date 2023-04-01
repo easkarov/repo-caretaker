@@ -6,15 +6,27 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import ru.tinkoff.edu.java.bot.dto.response.LinkResponse;
 import ru.tinkoff.edu.java.bot.meta.Command;
 import ru.tinkoff.edu.java.bot.MessageSender;
 import ru.tinkoff.edu.java.bot.meta.State;
+import ru.tinkoff.edu.java.bot.service.LinkService;
+
+import java.net.URI;
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 
 @Component
 @RequiredArgsConstructor
 public class ListCommandHandler implements CommandHandler<SendMessage, SendResponse> {
     private final MessageSender messageSender;
+    private final LinkService linkService;
+
+    public MessageSender getMessageSender() {
+        return messageSender;
+    }
 
     @Override
     public Command command() {
@@ -28,6 +40,20 @@ public class ListCommandHandler implements CommandHandler<SendMessage, SendRespo
 
     @Override
     public SendMessage handle(Update update) {
-        return messageSender.send(update, "There are all you links below!");
+        long chatId = update.message().chat().id();
+        List<LinkResponse> linkResponses = linkService.getAllLinks(chatId);
+
+        if (linkResponses.isEmpty()) {
+            return messageSender.send(update, "There are no tracked links :(");
+        }
+
+        var message = linkResponses
+                .stream()
+                .map(LinkResponse::url)
+                .map(URI::toString)
+                .collect(Collectors.joining("\n"));
+        System.out.println(message);
+        System.out.println(messageSender);
+        return messageSender.send(update, message);
     }
 }

@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.parser;
 
-import ru.tinkoff.edu.java.response.BaseResponse;
-import ru.tinkoff.edu.java.response.StackOverflowResponse;
+import ru.tinkoff.edu.java.parser.response.BaseResponse;
+import ru.tinkoff.edu.java.parser.response.StackOverflowResponse;
 
 import java.util.Optional;
 import java.util.regex.Pattern;

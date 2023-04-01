@@ -5,8 +5,8 @@ import com.pengrad.telegrambot.TelegramBot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.tinkoff.edu.java.bot.bot.UpdatesProcessor;
-import ru.tinkoff.edu.java.bot.bot.command.CommandHandler;
+import ru.tinkoff.edu.java.bot.UpdatesProcessor;
+import ru.tinkoff.edu.java.bot.command.CommandHandler;
 
 import java.util.HashMap;
 import java.util.List;

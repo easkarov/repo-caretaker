@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.bot.command;
+package ru.tinkoff.edu.java.bot.command;
 
 
 import com.pengrad.telegrambot.model.Update;
@@ -6,18 +6,22 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.bot.bot.meta.Command;
-import ru.tinkoff.edu.java.bot.bot.MessageSender;
-import ru.tinkoff.edu.java.bot.bot.meta.State;
+import ru.tinkoff.edu.java.bot.meta.Command;
+import ru.tinkoff.edu.java.bot.MessageSender;
+import ru.tinkoff.edu.java.bot.meta.State;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 
 @Component
 @RequiredArgsConstructor
-public class StartCommandHandler implements CommandHandler<SendMessage, SendResponse> {
+public class HelpCommandHandler implements CommandHandler<SendMessage, SendResponse> {
     private final MessageSender messageSender;
+
     @Override
     public Command command() {
-        return Command.START;
+        return Command.HELP;
     }
 
     @Override
@@ -27,6 +31,7 @@ public class StartCommandHandler implements CommandHandler<SendMessage, SendResp
 
     @Override
     public SendMessage handle(Update update) {
-        return messageSender.send(update, "Welcome!", true);
+        return messageSender.send(update, Arrays.stream(Command.values())
+                .map(Command::toString).collect(Collectors.joining("\n")));
     }
 }

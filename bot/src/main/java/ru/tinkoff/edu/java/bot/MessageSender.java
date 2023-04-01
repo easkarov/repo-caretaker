@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.bot;
+package ru.tinkoff.edu.java.bot;
 
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.Keyboard;
@@ -7,7 +7,7 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove;
 import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.bot.bot.meta.Command;
+import ru.tinkoff.edu.java.bot.meta.Command;
 
 import java.util.Arrays;
 

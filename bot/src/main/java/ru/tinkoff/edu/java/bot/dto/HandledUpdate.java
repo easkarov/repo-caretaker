@@ -11,4 +11,5 @@ public record HandledUpdate(
         Optional<BaseRequest<?, ?>> request,
         State newState
 ) {
+    public static final HandledUpdate EMPTY = new HandledUpdate(Optional.empty(), State.NONE);
 }

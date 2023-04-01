@@ -52,7 +52,7 @@ public class UpdatesHandlerTest {
     }
 
     @SneakyThrows
-    Update getUpdate(Long chatId) {
+    Update getUpdate(Long chatId, String text) {
         Chat chat = new Chat();
         Field id = chat.getClass().getDeclaredField("id");
         id.setAccessible(true);
@@ -62,6 +62,9 @@ public class UpdatesHandlerTest {
         Field chatField = message.getClass().getDeclaredField("chat");
         chatField.setAccessible(true);
         chatField.set(message, chat);
+        Field textField = message.getClass().getDeclaredField("text");
+        textField.setAccessible(true);
+        textField.set(message, text);
 
         Update update = new Update();
         Field messageField = update.getClass().getDeclaredField("message");
@@ -77,10 +80,10 @@ public class UpdatesHandlerTest {
 
         long chatId = 123;
         var helpMessage = "Unknown command. Try using /help.";
-        var emptyHandledUpdate = new HandledUpdate(Optional.empty(), State.NONE);
+        var emptyHandledUpdate = HandledUpdate.EMPTY;
         var helpHandledUpdate = new HandledUpdate(Optional.of(new SendMessage(chatId, helpMessage)), State.NONE);
 
-        Update update = getUpdate(chatId);
+        Update update = getUpdate(chatId, "abracadabra");
         when(commandsHandler.handle(update)).thenReturn(emptyHandledUpdate);
         when(messageHandler.handle(update, State.NONE)).thenReturn(helpHandledUpdate);
 

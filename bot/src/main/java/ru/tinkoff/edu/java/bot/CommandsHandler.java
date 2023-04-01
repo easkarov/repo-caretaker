@@ -31,12 +31,8 @@ public class CommandsHandler {
         Matcher matcher = COMMAND_REGEX.matcher(update.message().text());
 
         if (!matcher.matches()) {
-            return HandledUpdate.builder()
-                    .request(Optional.empty())
-                    .newState(State.NONE)
-                    .build();
+            return HandledUpdate.EMPTY;
         }
-
         var foundCommandHandler = findCommandHandler(update);
         return HandledUpdate.builder()
                 .request(foundCommandHandler.map(commandHandler -> commandHandler.handle(update)))

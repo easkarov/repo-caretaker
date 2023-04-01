@@ -6,23 +6,19 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.bot.bot.Sender;
+import ru.tinkoff.edu.java.bot.bot.Command;
+import ru.tinkoff.edu.java.bot.bot.MessageSender;
 import ru.tinkoff.edu.java.bot.bot.State;
 
 
 @Component
 @RequiredArgsConstructor
-public class LinkCommand implements Command<SendMessage, SendResponse> {
-    private final Sender messageSender;
+public class LinkCommandHandler implements CommandHandler<SendMessage, SendResponse> {
+    private final MessageSender messageSender;
 
     @Override
-    public String name() {
-        return "link";
-    }
-
-    @Override
-    public String description() {
-        return "Track link";
+    public Command command() {
+        return Command.TRACK;
     }
 
     @Override
@@ -32,6 +28,6 @@ public class LinkCommand implements Command<SendMessage, SendResponse> {
 
     @Override
     public SendMessage handle(Update update) {
-        return messageSender.send(update, "You chose /link command");
+        return messageSender.send(update, "Type link (URL):");
     }
 }

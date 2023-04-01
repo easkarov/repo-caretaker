@@ -3,8 +3,8 @@ package ru.tinkoff.edu.java.bot.bot;
 import com.pengrad.telegrambot.model.Update;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.bot.bot.command.Command;
-import ru.tinkoff.edu.java.bot.bot.command.HelpCommand;
+import ru.tinkoff.edu.java.bot.bot.command.CommandHandler;
+import ru.tinkoff.edu.java.bot.dto.HandledUpdate;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,22 +13,16 @@ import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
-public class CommandHandler {
+public class CommandsHandler {
     private final Pattern COMMAND_REGEX = Pattern.compile("/(.+)");
 
-    public final List<Command<?, ?>> commands;
-    public final HelpCommand helpCommand;
+    private final List<CommandHandler<?, ?>> commandHandlers;
 
-    public List<Command<?, ?>> getCommands() {
-        return commands;
-    }
-
-    public Command<?, ?> findCommand(Update update) {
-        return commands
+    public Optional<CommandHandler<?, ?>> findCommandHandler(Update update) {
+        return commandHandlers
                 .stream()
-                .filter(command -> command.canHandle(update))
-                .findFirst()
-                .orElse(helpCommand);
+                .filter(commandHandler -> commandHandler.canHandle(update))
+                .findFirst();
     }
 
     public HandledUpdate handle(Update update) {
@@ -42,10 +36,10 @@ public class CommandHandler {
                     .build();
         }
 
-        var foundCommand = findCommand(update);
+        var foundCommandHandler = findCommandHandler(update);
         return HandledUpdate.builder()
-                .request(Optional.of(foundCommand.handle(update)))
-                .newState(foundCommand.state())
+                .request(foundCommandHandler.map(commandHandler -> commandHandler.handle(update)))
+                .newState(foundCommandHandler.map(CommandHandler::state).orElse(State.NONE))
                 .build();
     }
 }

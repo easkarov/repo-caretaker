@@ -3,6 +3,7 @@ package ru.tinkoff.edu.java.bot;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Update;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.tinkoff.edu.java.bot.meta.State;
@@ -15,15 +16,16 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class UpdatesProcessor implements UpdatesListener {
+public class UpdatesHandler implements UpdatesListener {
 
-    private TelegramBot bot;
+    private final TelegramBot bot;
     private final CommandsHandler commandsHandler;
     private final MessageHandler messageHandler;
     private final Map<Long, State> userStates = new HashMap<>();
 
-    public void setBot(TelegramBot bot) {
-        this.bot = bot;
+    @PostConstruct
+    public void init() {
+        bot.setUpdatesListener(this);
     }
 
     @Override

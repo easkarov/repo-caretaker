@@ -31,7 +31,7 @@ public class MessageHandler {
                 request = messageSender.send(update, "Got this link untracked, thanks.");
             }
             default -> {
-                request = messageSender.send(update, "Unknown message. Try using /help.");
+                request = messageSender.send(update, "Unknown command. Try using /help.");
             }
         }
 

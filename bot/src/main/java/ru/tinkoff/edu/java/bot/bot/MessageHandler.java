@@ -22,10 +22,16 @@ public class MessageHandler {
         SendMessage request;
         State newState = State.NONE;
 
-        if (state == State.TRACK_LINK) {
-            request = messageSender.send(update, "Got this link tracked, thanks.");
-        } else {
-            request = messageSender.send(update, "Unknown message. Try using /help.");
+        switch (state) {
+            case TRACK -> {
+                request = messageSender.send(update, "Got this link tracked, thanks.");
+            }
+            case UNTRACK -> {
+                request = messageSender.send(update, "Got this link untracked, thanks.");
+            }
+            default -> {
+                request = messageSender.send(update, "Unknown message. Try using /help.");
+            }
         }
 
         return HandledUpdate.builder()

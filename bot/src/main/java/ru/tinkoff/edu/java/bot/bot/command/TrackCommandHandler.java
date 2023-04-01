@@ -13,7 +13,7 @@ import ru.tinkoff.edu.java.bot.bot.State;
 
 @Component
 @RequiredArgsConstructor
-public class LinkCommandHandler implements CommandHandler<SendMessage, SendResponse> {
+public class TrackCommandHandler implements CommandHandler<SendMessage, SendResponse> {
     private final MessageSender messageSender;
 
     @Override
@@ -23,11 +23,11 @@ public class LinkCommandHandler implements CommandHandler<SendMessage, SendRespo
 
     @Override
     public State state() {
-        return State.TRACK_LINK;
+        return State.TRACK;
     }
 
     @Override
     public SendMessage handle(Update update) {
-        return messageSender.send(update, "Type link (URL):");
+        return messageSender.send(update, "Type URL:");
     }
 }

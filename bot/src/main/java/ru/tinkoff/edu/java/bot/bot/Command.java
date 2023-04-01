@@ -5,7 +5,9 @@ import lombok.Getter;
 public enum Command {
     START("start", "Start bot"),
     TRACK("track", "Track link"),
-    HELP("help", "List all commands");
+    HELP("help", "List all commands"),
+    UNTRACK("untrack", "Untrack link"),
+    LIST("list", "List all links");
 
     @Getter
     private final String name, description;

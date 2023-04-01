@@ -12,9 +12,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class MessageHandler {
-    public final CommandsHandler commandsHandler;
-    public final HelpCommandHandler helpCommand;
+public class MessageHandler { ;
     public final MessageSender messageSender;
 
     // probably needs refactoring

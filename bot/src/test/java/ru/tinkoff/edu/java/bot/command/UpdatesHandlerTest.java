@@ -18,16 +18,13 @@ import ru.tinkoff.edu.java.bot.CommandsHandler;
 import ru.tinkoff.edu.java.bot.MessageHandler;
 import ru.tinkoff.edu.java.bot.UpdatesHandler;
 import ru.tinkoff.edu.java.bot.dto.HandledUpdate;
-import ru.tinkoff.edu.java.bot.dto.response.LinkResponse;
 import ru.tinkoff.edu.java.bot.meta.State;
 
 import java.lang.reflect.Field;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +40,7 @@ public class UpdatesHandlerTest {
     @Mock
     CommandsHandler commandsHandler;
 
+    @Mock
     MessageHandler messageHandler;
 
     @Captor
@@ -78,14 +76,13 @@ public class UpdatesHandlerTest {
         // given
 
         long chatId = 123;
-        var emptyHandledUpdate = HandledUpdate
-                .builder()
-                .request(Optional.empty())
-                .newState(State.NONE)
-                .build();
+        var helpMessage = "Unknown command. Try using /help.";
+        var emptyHandledUpdate = new HandledUpdate(Optional.empty(), State.NONE);
+        var helpHandledUpdate = new HandledUpdate(Optional.of(new SendMessage(chatId, helpMessage)), State.NONE);
 
         Update update = getUpdate(chatId);
         when(commandsHandler.handle(update)).thenReturn(emptyHandledUpdate);
+        when(messageHandler.handle(update, State.NONE)).thenReturn(helpHandledUpdate);
 
         // when
         updatesHandler.process(List.of(update));
@@ -93,7 +90,7 @@ public class UpdatesHandlerTest {
 
         // then
         var requestMessage = captor.getValue().getParameters().get("text");
-        assertThat(requestMessage).isEqualTo("Unknown command. Try using /help.");
+        assertThat(requestMessage).isEqualTo(helpMessage);
     }
 }
 

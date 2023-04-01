@@ -21,7 +21,7 @@ public class UpdatesHandler implements UpdatesListener {
     private final TelegramBot bot;
     private final CommandsHandler commandsHandler;
     private final MessageHandler messageHandler;
-    private final Map<Long, State> userStates = new HashMap<>();
+    private final Map<Long, State> states = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -36,20 +36,20 @@ public class UpdatesHandler implements UpdatesListener {
                 continue;
             }
 
-            Long userId = update.message().from().id();
-            State state = userStates.getOrDefault(userId, State.NONE);
+            Long chatId = update.message().chat().id();
+            State state = states.getOrDefault(chatId, State.NONE);
 
             HandledUpdate handledUpdate = commandsHandler.handle(update);
             if (handledUpdate.request().isPresent()) {
                 bot.execute(handledUpdate.request().get());
-                userStates.put(userId, handledUpdate.newState());
+                states.put(chatId, handledUpdate.newState());
                 continue;
             }
 
             handledUpdate = messageHandler.handle(update, state);
             if (handledUpdate.request().isPresent()) {
                 bot.execute(handledUpdate.request().get());
-                userStates.put(userId, handledUpdate.newState());
+                states.put(chatId, handledUpdate.newState());
             }
         }
 

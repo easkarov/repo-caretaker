@@ -24,10 +24,6 @@ public class ListCommandHandler implements CommandHandler<SendMessage, SendRespo
     private final MessageSender messageSender;
     private final LinkService linkService;
 
-    public MessageSender getMessageSender() {
-        return messageSender;
-    }
-
     @Override
     public Command command() {
         return Command.LIST;
@@ -40,8 +36,7 @@ public class ListCommandHandler implements CommandHandler<SendMessage, SendRespo
 
     @Override
     public SendMessage handle(Update update) {
-        long chatId = update.message().chat().id();
-        List<LinkResponse> linkResponses = linkService.getAllLinks(chatId);
+        List<LinkResponse> linkResponses = linkService.getAllLinks(update.message().chat().id());
 
         if (linkResponses.isEmpty()) {
             return messageSender.send(update, "There are no tracked links :(");
@@ -52,8 +47,7 @@ public class ListCommandHandler implements CommandHandler<SendMessage, SendRespo
                 .map(LinkResponse::url)
                 .map(URI::toString)
                 .collect(Collectors.joining("\n"));
-        System.out.println(message);
-        System.out.println(messageSender);
+
         return messageSender.send(update, message);
     }
 }

@@ -12,6 +12,7 @@ public class ClientConfiguration {
     ApplicationConfig applicationConfig;
     @Bean
     public ScrapperClient stackOverflowClient() {
+        // Создаётся клиент с базовой URL из файла конфига (есть значение по умолчанию @DefaultValue)
         return new ScrapperClient(applicationConfig.client().url());
     }
 

@@ -12,7 +12,7 @@ public class StackOverflowParser extends LinkChainParser {
     @Override
     public Optional<BaseResponse> parse(String text) {
         var pattern = Pattern.compile(QID_REGEX);
-        var matcher = pattern.matcher(text);
+        var matcher = pattern.matcher(text.trim());
         if (matcher.find()) {
             String questionId = matcher.group(1);
             return Optional.of(new StackOverflowResponse(questionId));

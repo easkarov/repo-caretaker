@@ -12,7 +12,7 @@ public class GitHubParser extends LinkChainParser {
     @Override
     public Optional<BaseResponse> parse(String text) {
         var pattern = Pattern.compile(USER_REPO_REGEX);
-        var matcher = pattern.matcher(text);
+        var matcher = pattern.matcher(text.trim());
         if (matcher.find()) {
             String username = matcher.group(1);
             String repository = matcher.group(2);

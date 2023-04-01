@@ -23,6 +23,7 @@ import ru.tinkoff.edu.java.bot.meta.State;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -78,7 +79,7 @@ public class UpdatesHandlerTest {
     void handle_executeUnknownCommandSendMessageRequest() {
         // given
 
-        long chatId = 123;
+        long chatId = new Random().nextLong();
         var helpMessage = "Unknown command. Try using /help.";
         var emptyHandledUpdate = HandledUpdate.EMPTY;
         var helpHandledUpdate = new HandledUpdate(Optional.of(new SendMessage(chatId, helpMessage)), State.NONE);

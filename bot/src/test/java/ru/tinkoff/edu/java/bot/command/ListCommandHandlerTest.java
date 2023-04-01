@@ -18,6 +18,7 @@ import ru.tinkoff.edu.java.bot.service.LinkService;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.List;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -60,12 +61,12 @@ public class ListCommandHandlerTest {
     void handle_ReturnMessageTellingNoLinks_EmptyLinkList() {
         // given
 
-        long chatId = 123;
-        Update update = getUpdate(chatId);
-        when(linkService.getAllLinks(chatId)).thenReturn(List.of());
+        final long CHAT_ID = new Random().nextLong();
+        final Update UPDATE = getUpdate(CHAT_ID);
+        when(linkService.getAllLinks(CHAT_ID)).thenReturn(List.of());
 
         // when
-        SendMessage request = listCommandHandler.handle(update);
+        SendMessage request = listCommandHandler.handle(UPDATE);
 
         // then
         assertThat(request.getParameters().get("text")).isEqualTo("There are no tracked links :(");
@@ -74,22 +75,22 @@ public class ListCommandHandlerTest {
     @Test
     void handle_ReturnMessageTellingSomeLinks_FilledLinkList() {
         // given
-        long chatId = 123;
-        URI firstUrl = URI.create("https://google.com");
-        URI secondUrl = URI.create("https://yandex.ru");
+        final long CHAT_ID = new Random().nextLong();
+        final URI FIRST_URL = URI.create("https://google.com");
+        final URI SECOND_URL = URI.create("https://yandex.ru");
 
         List<LinkResponse> links = List.of(
-                new LinkResponse(chatId, firstUrl),
-                new LinkResponse(chatId, secondUrl)
+                new LinkResponse(CHAT_ID, FIRST_URL),
+                new LinkResponse(CHAT_ID, SECOND_URL)
         );
-        Update update = getUpdate(chatId);
+        Update update = getUpdate(CHAT_ID);
 
-        when(linkService.getAllLinks(chatId)).thenReturn(links);
+        when(linkService.getAllLinks(CHAT_ID)).thenReturn(links);
 
         // when
         SendMessage request = listCommandHandler.handle(update);
 
         // then
-        assertThat(request.getParameters().get("text")).isEqualTo("%s\n%s".formatted(firstUrl, secondUrl));
+        assertThat(request.getParameters().get("text")).isEqualTo("%s\n%s".formatted(FIRST_URL, SECOND_URL));
     }
 }

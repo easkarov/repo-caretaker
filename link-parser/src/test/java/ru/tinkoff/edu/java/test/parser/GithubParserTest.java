@@ -18,7 +18,7 @@ public class GithubParserTest {
     GitHubParser gitHubParser = new GitHubParser();
 
     @ParameterizedTest
-    @MethodSource("provideValidGitHubLinks")
+    @MethodSource("provideValidLinks")
     void parse_returnGitHubResponse_ValidURLs(String url, String expectedUser, String expectedRepo) {
         // given
 
@@ -30,13 +30,13 @@ public class GithubParserTest {
         assertThat(response.get()).isInstanceOf(GitHubResponse.class);
 
         var githubResponse = (GitHubResponse) response.get();
-        assertAll("Check if user and repo in response are valid",
+        assertAll("Validate user and repo in response",
                 () -> assertThat(githubResponse.user()).isEqualTo(expectedUser),
                 () -> assertThat(githubResponse.repo()).isEqualTo(expectedRepo));
     }
 
     @ParameterizedTest
-    @MethodSource("provideInvalidGitHubLinks")
+    @MethodSource("provideInvalidLinks")
     void parse_returnEmptyOptional_InvalidURLs(String url) {
         // given
 
@@ -47,10 +47,10 @@ public class GithubParserTest {
         assertThat(response).isEmpty();
     }
 
-    static Stream<Arguments> provideValidGitHubLinks() {
+    static Stream<Arguments> provideValidLinks() {
 
         final String URL = "https://github.com/%s/%s";
-        final String SLASH_URL = "https://github.com/%s/%s";
+        final String SLASH_URL = URL + "/";
 
         Stream<GitHubResponse> input = Stream.of(
                 new GitHubResponse("user", "repo"),
@@ -67,9 +67,9 @@ public class GithubParserTest {
         );
     }
 
-    static Stream<String> provideInvalidGitHubLinks() {
+    static Stream<String> provideInvalidLinks() {
         return Stream.of(
-                "http://github.com/emil/project",
+                "http://github.com/emil/project   ",
                 "https://github.co/emil/project",
                 "github.com/user/repo",
                 "https://github.com//",

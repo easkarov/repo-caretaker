@@ -48,23 +48,7 @@ public class GithubParserTest {
     }
 
     static Stream<Arguments> provideValidLinks() {
-
-        final String URL = "https://github.com/%s/%s";
-        final String SLASH_URL = URL + "/";
-
-        Stream<GitHubResponse> input = Stream.of(
-                new GitHubResponse("user", "repo"),
-                new GitHubResponse("123", "123"),
-                new GitHubResponse("a-b-c", "a.b.c"),
-                new GitHubResponse("dot.dot.dot", "s-s-s")
-        );
-
-        return input.flatMap(response -> Stream.of(
-                Arguments.of(URL.formatted(response.user(), response.repo()),
-                        response.user(), response.repo()),
-                Arguments.of(SLASH_URL.formatted(response.user(), response.repo()),
-                        response.user(), response.repo()))
-        );
+        return TestSamples.provideGitHubValidLinks();
     }
 
     static Stream<String> provideInvalidLinks() {

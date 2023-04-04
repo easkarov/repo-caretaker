@@ -6,9 +6,9 @@ import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.bot.meta.Command;
+import ru.tinkoff.edu.java.bot.enums.Command;
 import ru.tinkoff.edu.java.bot.MessageSender;
-import ru.tinkoff.edu.java.bot.meta.State;
+import ru.tinkoff.edu.java.bot.enums.State;
 
 
 @Component

@@ -7,14 +7,13 @@ import com.pengrad.telegrambot.response.SendResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.tinkoff.edu.java.bot.dto.response.LinkResponse;
-import ru.tinkoff.edu.java.bot.meta.Command;
+import ru.tinkoff.edu.java.bot.enums.Command;
 import ru.tinkoff.edu.java.bot.MessageSender;
-import ru.tinkoff.edu.java.bot.meta.State;
+import ru.tinkoff.edu.java.bot.enums.State;
 import ru.tinkoff.edu.java.bot.service.LinkService;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 

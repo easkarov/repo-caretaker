@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.bot.meta;
+package ru.tinkoff.edu.java.bot.enums;
 
 
 /**

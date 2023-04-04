@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.tinkoff.edu.java.bot.CommandsHandler;
 import ru.tinkoff.edu.java.bot.MessageHandler;
 import ru.tinkoff.edu.java.bot.UpdatesHandler;
@@ -54,23 +55,16 @@ public class UpdatesHandlerTest {
 
     @SneakyThrows
     Update getUpdate(Long chatId, String text) {
+
         Chat chat = new Chat();
-        Field id = chat.getClass().getDeclaredField("id");
-        id.setAccessible(true);
-        id.set(chat, chatId);
+        ReflectionTestUtils.setField(chat, "id", chatId);
 
         Message message = new Message();
-        Field chatField = message.getClass().getDeclaredField("chat");
-        chatField.setAccessible(true);
-        chatField.set(message, chat);
-        Field textField = message.getClass().getDeclaredField("text");
-        textField.setAccessible(true);
-        textField.set(message, text);
+        ReflectionTestUtils.setField(message, "chat", chat);
+        ReflectionTestUtils.setField(message, "text", text);
 
         Update update = new Update();
-        Field messageField = update.getClass().getDeclaredField("message");
-        messageField.setAccessible(true);
-        messageField.set(update, message);
+        ReflectionTestUtils.setField(update, "message", message);
 
         return update;
     }

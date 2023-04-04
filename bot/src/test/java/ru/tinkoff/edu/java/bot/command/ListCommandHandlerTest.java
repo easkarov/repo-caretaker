@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import ru.tinkoff.edu.java.bot.MessageSender;
 import ru.tinkoff.edu.java.bot.dto.response.LinkResponse;
 import ru.tinkoff.edu.java.bot.service.LinkService;
@@ -40,19 +41,13 @@ public class ListCommandHandlerTest {
     @SneakyThrows
     Update getUpdate(Long chatId) {
         Chat chat = new Chat();
-        Field id = chat.getClass().getDeclaredField("id");
-        id.setAccessible(true);
-        id.set(chat, chatId);
+        ReflectionTestUtils.setField(chat, "id", chatId);
 
         Message message = new Message();
-        Field chatField = message.getClass().getDeclaredField("chat");
-        chatField.setAccessible(true);
-        chatField.set(message, chat);
+        ReflectionTestUtils.setField(message, "chat", chat);
 
         Update update = new Update();
-        Field messageField = update.getClass().getDeclaredField("message");
-        messageField.setAccessible(true);
-        messageField.set(update, message);
+        ReflectionTestUtils.setField(update, "message", message);
 
         return update;
     }

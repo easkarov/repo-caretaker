@@ -21,7 +21,6 @@ public class StackOverflowParserTest {
 
         // when
         Optional<BaseResponse> response = stackOverflowParser.parse(url);
-
         // then
         assertThat(response).isNotEmpty();
         assertThat(response.get()).isInstanceOf(StackOverflowResponse.class);

@@ -1,14 +1,12 @@
 package ru.tinkoff.edu.java.test.parser;
 
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.tinkoff.edu.java.parser.StackOverflowParser;
 import ru.tinkoff.edu.java.parser.response.BaseResponse;
 import ru.tinkoff.edu.java.parser.response.StackOverflowResponse;
 
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -17,7 +15,7 @@ public class StackOverflowParserTest {
     StackOverflowParser stackOverflowParser = new StackOverflowParser();
 
     @ParameterizedTest
-    @MethodSource("provideValidLinks")
+    @MethodSource("ru.tinkoff.edu.java.test.parser.util.TestSamples#provideStackOverflowValidLinks")
     void parse_returnStackOverflowResponse_ValidURLs(String url, String expectedQuestionId) {
         // given
 
@@ -35,7 +33,7 @@ public class StackOverflowParserTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideInvalidLinks")
+    @MethodSource("ru.tinkoff.edu.java.test.parser.util.TestSamples#provideInvalidLinks")
     void parse_returnEmptyOptional_InvalidURLs(String url) {
         // given
 
@@ -44,21 +42,6 @@ public class StackOverflowParserTest {
 
         // then
         assertThat(response).isEmpty();
-    }
-
-    static Stream<Arguments> provideValidLinks() {
-        return TestSamples.provideStackOverflowValidLinks();
-    }
-
-    static Stream<String> provideInvalidLinks() {
-        return Stream.of(
-                "http://github.com/emil/project",
-                "https://stackoverflow.com/questions/",
-                "https://stackoverflow.com/questions/      ",
-                "https://stackoverflow.com/questions/aaaa",
-                "https://stackoverflow.com/questions/123 123",
-                "https://vk.com/user/repo"
-        );
     }
 
 

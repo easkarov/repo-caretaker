@@ -11,7 +11,7 @@ import ru.tinkoff.edu.java.scrapper.dto.response.StackOverflowQuestionsResponse;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class StackOverflowClient implements Client {
+public class StackOverflowClient {
     private static final String GET_QUESTIONS_ENDPOINT = "/questionsss/%s?site=stackoverflow";
 
     private final WebClient webClient;
@@ -24,19 +24,15 @@ public class StackOverflowClient implements Client {
         return new StackOverflowClient(webClient);
     }
 
-    public <T> Optional<T> get(String uri, Class<T> destClass) {
-        return webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(destClass)
-                .onErrorResume(WebClientResponseException.class, exception -> Mono.empty())
-                .blockOptional();
-    }
-
     public Optional<StackOverflowQuestionResponse> fetchQuestion(long questionId) {
         String uri = String.format(GET_QUESTIONS_ENDPOINT, questionId);
 
-        return get(uri, StackOverflowQuestionsResponse.class)
+        return webClient.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(StackOverflowQuestionsResponse.class)
+                .onErrorResume(WebClientResponseException.class, exception -> Mono.empty())
+                .blockOptional()
                 .filter(questions -> !questions.items().isEmpty())
                 .map(questions -> questions.items().get(0));
     }

@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper;
+package util;
 
 
 import liquibase.Contexts;
@@ -20,8 +20,8 @@ import java.sql.SQLException;
 @Testcontainers
 public abstract class IntegrationEnvironment {
 
-    static final PostgreSQLContainer<?> DB_CONTAINER;
-    static final Path CHANGELOG_PATH = new File("scrapper").toPath().toAbsolutePath().resolve("migrations");
+    protected static final PostgreSQLContainer<?> DB_CONTAINER;
+    private static final Path CHANGELOG_PATH = new File("migrations").toPath().toAbsolutePath();
 
     static {
         DB_CONTAINER = new PostgreSQLContainer<>("postgres:15")
@@ -29,10 +29,13 @@ public abstract class IntegrationEnvironment {
                 .withUsername("postgres")
                 .withPassword("password");
         DB_CONTAINER.start();
+
+        runMigrations();
     }
 
-    private static void runMigrations(PostgreSQLContainer<?> c) {
-        try (var conn = DriverManager.getConnection(c.getJdbcUrl(), c.getUsername(), c.getPassword())) {
+    private static void runMigrations() {
+        try (var conn = DriverManager.getConnection(DB_CONTAINER.getJdbcUrl(),
+                DB_CONTAINER.getUsername(), DB_CONTAINER.getPassword())) {
             var changeLogDir = new DirectoryResourceAccessor(CHANGELOG_PATH);
 
             var db = new PostgresDatabase();
@@ -46,9 +49,4 @@ public abstract class IntegrationEnvironment {
             throw new RuntimeException(exception);
         }
      }
-
-    public static void main(String[] args) {
-        System.out.println(CHANGELOG_PATH);
-    }
-
 }

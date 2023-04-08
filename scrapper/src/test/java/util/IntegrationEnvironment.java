@@ -14,7 +14,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Testcontainers
@@ -34,8 +33,8 @@ public abstract class IntegrationEnvironment {
     }
 
     private static void runMigrations() {
-        try (var conn = DriverManager.getConnection(DB_CONTAINER.getJdbcUrl(),
-                DB_CONTAINER.getUsername(), DB_CONTAINER.getPassword())) {
+        try (var conn = DB_CONTAINER.createConnection("")) {
+
             var changeLogDir = new DirectoryResourceAccessor(CHANGELOG_PATH);
 
             var db = new PostgresDatabase();

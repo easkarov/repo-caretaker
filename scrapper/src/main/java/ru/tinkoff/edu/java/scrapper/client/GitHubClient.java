@@ -11,7 +11,7 @@ import java.util.Optional;
 
 
 @RequiredArgsConstructor
-public class GitHubClient implements Client {
+public class GitHubClient {
     private static final String GET_REPO_ENDPOINT = "/repos/%s/%s";
 
     private final WebClient webClient;
@@ -25,19 +25,16 @@ public class GitHubClient implements Client {
         return new GitHubClient(webClient);
 
     }
-    public <T> Optional<T> get(String uri, Class<T> destClass) {
-        return webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(destClass)
-                .onErrorResume(WebClientResponseException.class, exception -> Mono.empty())
-                .blockOptional();
-    }
 
     public Optional<GitHubRepositoryResponse> fetchRepository(String owner, String repo) {
         String uri = String.format(GET_REPO_ENDPOINT, owner, repo);
 
-        return get(uri, GitHubRepositoryResponse.class);
+        return webClient.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(GitHubRepositoryResponse.class)
+                .onErrorResume(WebClientResponseException.class, exception -> Mono.empty())
+                .blockOptional();
 
     }
 }

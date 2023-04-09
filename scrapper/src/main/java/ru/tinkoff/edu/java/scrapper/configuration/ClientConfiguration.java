@@ -15,16 +15,12 @@ public class ClientConfiguration {
 
     @Bean
     public GitHubClient gitHubClient() {
-        // Тут если в конфиг файле не указан baseUrl, тогда устанавливается значение по дефолту
-        // (в общем не противоречит заданию)
         return GitHubClient.fromConfig(gitHubConfiguration);
 
     }
 
     @Bean
     public StackOverflowClient stackOverflowClient() {
-        // Тут если в конфиг файле не указан baseUrl, тогда устанавливается значение по дефолту
-        // (в общем не противоречит заданию)
         return StackOverflowClient.fromConfig(stackOverflowConfiguration);
     }
 

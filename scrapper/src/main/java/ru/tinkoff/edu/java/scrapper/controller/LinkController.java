@@ -6,11 +6,12 @@ import ru.tinkoff.edu.java.scrapper.dto.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.scrapper.dto.response.LinkResponse;
 import ru.tinkoff.edu.java.scrapper.dto.response.ListLinkResponse;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/links")
+@RequestMapping("/api/link")
 public class LinkController {
     private static final String TG_CHAT_HEADER = "Tg-Chat-Id";
 
@@ -20,23 +21,18 @@ public class LinkController {
     }
 
     @PostMapping
-    public LinkResponse addLink(
+    public LinkResponse trackLink(
             @RequestHeader(name = TG_CHAT_HEADER) long tgChatId,
             @RequestBody AddLinkRequest addLinkRequest
     ) {
-        // TODO: Handle "chat not found" exception
-
-        return new LinkResponse(UUID.randomUUID().hashCode(), addLinkRequest.link());
+        return new LinkResponse(UUID.randomUUID().hashCode(), URI.create(addLinkRequest.link()));
     }
 
     @DeleteMapping
-    public LinkResponse removeLink(
+    public LinkResponse untrackLink(
             @RequestHeader(name = TG_CHAT_HEADER) long tgChatId,
             @RequestBody RemoveLinkRequest removeLinkRequest
     ) {
-
-        // TODO: Handle "chat not found" and "link not found" exceptions
-
-        return new LinkResponse(UUID.randomUUID().hashCode(), removeLinkRequest.link());
+        return new LinkResponse(UUID.randomUUID().hashCode(), URI.create(removeLinkRequest.link()));
     }
 }

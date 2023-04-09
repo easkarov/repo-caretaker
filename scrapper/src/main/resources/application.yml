@@ -14,10 +14,10 @@ springdoc:
 
 github-client:
   base-url: https://api.github.com
-#  api-key: ${GITHUB_API_KEY}
+  api-key: ${GITHUB_API_KEY}
   api-version: 2022-11-28
 
 stackoverflow-client:
   base-url: https://api.stackexchange.com/2.3
-#  api-key: ${STACKOVERFLOW_API_KEY}
+  api-key: ${STACKOVERFLOW_API_KEY}
 

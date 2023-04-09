@@ -1,5 +1,9 @@
 app:
   test: 777
+  bot:
+    token: ${BOT_TOKEN}
+  client:
+    url: http://localhost:8080/api
 
 server:
   port: 8000

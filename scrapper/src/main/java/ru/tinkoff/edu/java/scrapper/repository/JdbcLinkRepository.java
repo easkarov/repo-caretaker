@@ -9,6 +9,7 @@ import ru.tinkoff.edu.java.scrapper.model.Link;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -19,6 +20,12 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public List<Link> findAll() {
         return jdbcTemplate.query("SELECT * FROM link", this::mapRowToLink);
+    }
+
+    @Override
+    public Optional<Link> findByUrl(String url) {
+        var selectQuery = "SELECT * FROM link WHERE url = ?";
+        return Optional.ofNullable(jdbcTemplate.queryForObject(selectQuery, this::mapRowToLink, url));
     }
 
     @Override

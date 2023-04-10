@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -18,6 +19,13 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public List<Chat> findAll() {
         return jdbcTemplate.query("SELECT * FROM chat", new BeanPropertyRowMapper<>(Chat.class));
+    }
+
+    @Override
+    public Optional<Chat> findById(long id) {
+        var selectQuery = "SELECT * FROM chat WHERE id = ?";
+        return Optional.ofNullable(jdbcTemplate.queryForObject(selectQuery,
+                new BeanPropertyRowMapper<>(Chat.class), id));
     }
 
     @Override

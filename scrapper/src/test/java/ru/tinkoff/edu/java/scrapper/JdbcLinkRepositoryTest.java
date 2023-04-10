@@ -65,7 +65,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    public void removeLink__LinkIsForeignKeyInAnotherTable_throwException() {
+    public void removeLink__LinkIsBeingTrackedInChat_throwException() {
         // given
         var link = new Link()
                 .setId(123L)
@@ -82,11 +82,9 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    public void removeLink__LinkIsNotForeignKeyInAnotherTable_oneRemovedLink() {
+    public void removeLink__LinkIsNotBeingTrackedInChat_oneRemovedLink() {
         // given
-        var link = new Link()
-                .setId(123L)
-                .setUrl("http://stackoverflow.com/123123");
+        var link = new Link().setId(123L).setUrl("http://stackoverflow.com/123123");
         linkRepository.add(link);
 
         // when

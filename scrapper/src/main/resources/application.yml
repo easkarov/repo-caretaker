@@ -9,7 +9,6 @@ spring:
     enabled: false
 
 app:
-  test: 777
   scheduler:
     interval: 2000
 

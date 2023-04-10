@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ChatRepository {
     List<Chat> findAll();
-    int add(Chat link);
-    int remove(long id);
+    Chat add(Chat link);
+    boolean remove(long id);
 }

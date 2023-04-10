@@ -5,13 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.Duration;
-import java.util.Map;
 
 @Validated
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
-        @NotNull Scheduler scheduler,
-        Map<String, Integer> obj
+        @NotNull Scheduler scheduler
 ) {
     record Scheduler(Duration interval) {}
 }

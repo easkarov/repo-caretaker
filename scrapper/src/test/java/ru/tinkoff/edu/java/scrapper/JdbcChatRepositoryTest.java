@@ -17,8 +17,6 @@ import util.IntegrationEnvironment;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchException;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
@@ -67,7 +65,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
         var chat = new Chat(444L);
 
         chatRepository.add(chat);
-        jdbcTemplate.update("INSERT INTO link VALUES (?)", link.getUrl());
+        jdbcTemplate.update("INSERT INTO link(id, url) VALUES (?, ?)", link.getId(), link.getUrl());
         jdbcTemplate.update("INSERT INTO chat_link VALUES (?, ?)", chat.getId(), link.getId());
 
         // when, then

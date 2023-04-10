@@ -21,13 +21,19 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
-    public int add(Chat chat) {
-        return jdbcTemplate.update("INSERT INTO chat (id) VALUES (?)", chat.getId());
+    public Chat add(Chat chat) {
+        var insertQuery = "INSERT INTO chat (id) VALUES (?)";
+        var selectQuery = "SELECT * FROM chat WHERE id = ?";
+
+        jdbcTemplate.update(insertQuery, chat.getId());
+
+        return jdbcTemplate.queryForObject(selectQuery, new BeanPropertyRowMapper<>(Chat.class), chat.getId());
+
     }
 
     @Override
-    public int remove(long id) {
-        return jdbcTemplate.update("DELETE FROM chat WHERE id = ?", id);
+    public boolean remove(long id) {
+        return jdbcTemplate.update("DELETE FROM chat WHERE id = ?", id) >= 1;
     }
 
 }

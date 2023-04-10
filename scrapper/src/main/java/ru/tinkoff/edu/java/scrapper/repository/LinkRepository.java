@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface LinkRepository {
     List<Link> findAll();
-    int add(Link link);
-    int remove(long id);
-    int bindToChat(Link link, long chatId);
+    Link add(Link link);
+    boolean remove(long id);
+    boolean removeFromChat(long linkId, long chatId);
+    boolean addToChat(long linkId, long chatId);
 }

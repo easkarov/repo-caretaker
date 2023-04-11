@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface ChatRepository {
     List<Chat> findAll();
     Optional<Chat> findById(long id);
-    Chat add(Chat link);
-    boolean remove(long id);
+    Chat save(Chat link);
+    boolean removeById(long id);
 }

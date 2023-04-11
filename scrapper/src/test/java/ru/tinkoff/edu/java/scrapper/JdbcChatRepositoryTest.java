@@ -36,7 +36,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
         var chat = new Chat(444L);
 
         // when
-        chatRepository.add(chat);
+        chatRepository.save(chat);
 
         // then
         Chat addedChat = jdbcTemplate.queryForObject("SELECT * FROM chat WHERE id = ?",
@@ -51,10 +51,10 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     public void addChat__ChatAlreadyExistsInDb_throwException() {
         // given
         var chat = new Chat(444L);
-        chatRepository.add(chat);
+        chatRepository.save(chat);
 
         // when, then
-        assertThrows(DataIntegrityViolationException.class, () -> chatRepository.add(chat));
+        assertThrows(DataIntegrityViolationException.class, () -> chatRepository.save(chat));
     }
 
     @Test
@@ -64,12 +64,12 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
         var link = new Link().setId(123L).setUrl("http://stackoverflow.com/123123");
         var chat = new Chat(444L);
 
-        chatRepository.add(chat);
+        chatRepository.save(chat);
         jdbcTemplate.update("INSERT INTO link(id, url) VALUES (?, ?)", link.getId(), link.getUrl());
         jdbcTemplate.update("INSERT INTO chat_link VALUES (?, ?)", chat.getId(), link.getId());
 
         // when, then
-        assertThrows(DataIntegrityViolationException.class, () -> chatRepository.remove(chat.getId()));
+        assertThrows(DataIntegrityViolationException.class, () -> chatRepository.removeById(chat.getId()));
     }
 
     @Test
@@ -77,10 +77,10 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     public void removeChat__ChatDoesntHaveLinks_oneRemovedLink() {
         // given
         var chat = new Chat(444L);
-        chatRepository.add(chat);
+        chatRepository.save(chat);
 
         // when
-        chatRepository.remove(chat.getId());
+        chatRepository.removeById(chat.getId());
 
         // then
         Boolean ifRemoved = jdbcTemplate.queryForObject("SELECT COUNT(*) = 0 FROM chat WHERE id = ?",
@@ -94,7 +94,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     public void findAll__listOfChats() {
         // given
         var chatsToAdd = List.of(new Chat(444L), new Chat(111L));
-        chatsToAdd.forEach(chatRepository::add);
+        chatsToAdd.forEach(chatRepository::save);
 
         // when
         List<Chat> chats = chatRepository.findAll();

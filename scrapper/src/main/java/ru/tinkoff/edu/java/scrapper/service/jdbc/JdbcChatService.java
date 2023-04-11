@@ -18,13 +18,13 @@ public class JdbcChatService implements ChatService {
     @Override
     public void register(long chatId) {
         if (chatRepository.findById(chatId).isEmpty()) {
-            chatRepository.add(new Chat(chatId));
+            chatRepository.save(new Chat(chatId));
         }
     }
 
     @Transactional
     @Override
     public void unregister(long chatId) {
-        chatRepository.remove(chatId);
+        chatRepository.removeById(chatId);
     }
 }

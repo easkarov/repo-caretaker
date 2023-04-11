@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JdbcChatRepository implements ChatRepository {
 
+    public static final String SELECT_BY_ID = "SELECT * FROM chat WHERE id = ?";
+    public static final String INSERT = """
+            INSERT INTO chat(id) VALUES(?)
+            """;
+
     private final JdbcTemplate jdbcTemplate;
 
     @Override
@@ -23,24 +29,20 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public Optional<Chat> findById(long id) {
-        var selectQuery = "SELECT * FROM chat WHERE id = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(selectQuery,
-                new BeanPropertyRowMapper<>(Chat.class), id));
+        return jdbcTemplate.queryForStream(SELECT_BY_ID,
+                new BeanPropertyRowMapper<>(Chat.class), id).findFirst();
     }
 
     @Override
-    public Chat add(Chat chat) {
-        var insertQuery = "INSERT INTO chat (id) VALUES (?)";
-        var selectQuery = "SELECT * FROM chat WHERE id = ?";
-
-        jdbcTemplate.update(insertQuery, chat.getId());
-
-        return jdbcTemplate.queryForObject(selectQuery, new BeanPropertyRowMapper<>(Chat.class), chat.getId());
-
+    public Chat save(Chat chat) {
+        if (findById(chat.getId()).isEmpty()) {
+            jdbcTemplate.update(INSERT, chat.getId());
+        }
+        return chat;
     }
 
     @Override
-    public boolean remove(long id) {
+    public boolean removeById(long id) {
         return jdbcTemplate.update("DELETE FROM chat WHERE id = ?", id) >= 1;
     }
 

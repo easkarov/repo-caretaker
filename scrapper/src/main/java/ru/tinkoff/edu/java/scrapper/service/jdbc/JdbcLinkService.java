@@ -19,7 +19,7 @@ public class JdbcLinkService implements LinkService {
     @Transactional
     @Override
     public Link track(long tgChatId, String url) {
-        Link link = linkRepository.findByUrl(url).orElseGet(() -> linkRepository.add(new Link().setUrl(url)));
+        Link link = linkRepository.findByUrl(url).orElseGet(() -> linkRepository.save(new Link().setUrl(url)));
         linkRepository.addToChat(tgChatId, link.getId());
         return link;
     }
@@ -34,6 +34,6 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public List<Link> listAll(long tgChatId) {
-        return linkRepository.findAll(tgChatId);
+        return linkRepository.findAllByChat(tgChatId);
     }
 }

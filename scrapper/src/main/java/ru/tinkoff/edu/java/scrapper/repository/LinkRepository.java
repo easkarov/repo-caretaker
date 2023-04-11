@@ -7,10 +7,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LinkRepository {
-    List<Link> findAll(long chatId);
+    List<Link> findAll();
+    List<Link> findAllByChat(long chatId);
     Optional<Link> findByUrl(String url);
-    Link add(Link link);
-    boolean remove(long id);
+    Link save(Link link);
+    boolean removeById(long id);
     boolean removeFromChat(long chatId, long linkId);
     boolean addToChat(long chatId, long linkId);
 }

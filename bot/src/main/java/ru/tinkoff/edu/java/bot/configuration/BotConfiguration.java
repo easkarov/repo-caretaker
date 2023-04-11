@@ -20,16 +20,4 @@ public class BotConfiguration {
     public TelegramBot telegramBot() {
         return new TelegramBot(applicationConfig.bot().token());
     }
-
-    @Bean
-    // Вот этот бин потом можно будет заинжектить в CommandsHandler для более быстрого поиска команды что ли :/
-    //  Map command names to command objects for further injecting in CommandManager
-    public Map<String, CommandHandler<?, ?>> botCommands(List<CommandHandler<?, ?>> commandHandlers) {
-        var commandsMap = new HashMap<String, CommandHandler<?, ?>>();
-        for (var commandHandler : commandHandlers) {
-            commandsMap.put(commandHandler.command().name(), commandHandler);
-        }
-        return commandsMap;
-    }
-
 }

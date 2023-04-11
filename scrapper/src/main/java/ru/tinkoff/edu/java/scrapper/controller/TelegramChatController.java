@@ -1,23 +1,26 @@
 package ru.tinkoff.edu.java.scrapper.controller;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.tinkoff.edu.java.scrapper.service.ChatService;
 
 
 @RestController
 @RequestMapping("/api/tg-chat")
+@RequiredArgsConstructor
 public class TelegramChatController {
 
+    private final ChatService chatService;
+
     @PostMapping(path = "/{id}")
-    public String registerChat(@PathVariable(name = "id") long id) {
-        return "Чат зарегистрирован"; // stub
+    public void registerChat(@PathVariable(name = "id") long id) {
+        chatService.register(id);
     }
 
     @DeleteMapping(path = "/{id}")
-    public String deleteChat(@PathVariable(name = "id") long id) {
-
-        return "Чат (%s) успешно удалён".formatted(id);  // stub
-
+    public void deleteChat(@PathVariable(name = "id") long id) {
+        chatService.unregister(id);
     }
 
 }

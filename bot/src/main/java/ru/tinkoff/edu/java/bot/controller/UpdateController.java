@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.tinkoff.edu.java.bot.dto.LinkUpdate;
 
 @RestController
-@RequestMapping("/api/updates")
+@RequestMapping("/api/update")
 public class UpdateController {
 
     @PostMapping

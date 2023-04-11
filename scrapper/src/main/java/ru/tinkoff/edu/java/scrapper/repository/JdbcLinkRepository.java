@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.repository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -18,14 +19,19 @@ public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<Link> findAll() {
-        return jdbcTemplate.query("SELECT * FROM link", this::mapRowToLink);
+    public List<Link> findAll(long chatId) {
+        return jdbcTemplate.query("""
+                          SELECT link.* FROM link
+                          JOIN chat_link ON link.id = link_id WHERE chat_id = ?
+                        """,
+                this::mapRowToLink, chatId);
     }
 
     @Override
     public Optional<Link> findByUrl(String url) {
         var selectQuery = "SELECT * FROM link WHERE url = ?";
-        return Optional.ofNullable(jdbcTemplate.queryForObject(selectQuery, this::mapRowToLink, url));
+        List<Link> links = jdbcTemplate.query(selectQuery, this::mapRowToLink, url);
+        return (links.isEmpty() ? Optional.empty() : Optional.of(links.get(0)));
     }
 
     @Override
@@ -34,11 +40,10 @@ public class JdbcLinkRepository implements LinkRepository {
         var selectQuery = "SELECT * FROM LINK WHERE id = ?";
         var keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
-            var statement = con.prepareStatement(insertQuery);
+            var statement = con.prepareStatement(insertQuery, new String[]{"id"});
             statement.setString(1, link.getUrl());
             return statement;
         }, keyHolder);
-
         return jdbcTemplate.queryForObject(selectQuery, this::mapRowToLink, keyHolder.getKey());
     }
 

@@ -34,6 +34,6 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     public List<Link> listAll(long tgChatId) {
-        return linkRepository.findAll();
+        return linkRepository.findAll(tgChatId);
     }
 }

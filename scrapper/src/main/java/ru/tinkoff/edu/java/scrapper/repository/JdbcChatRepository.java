@@ -16,8 +16,14 @@ import java.util.Optional;
 public class JdbcChatRepository implements ChatRepository {
 
     public static final String SELECT_BY_ID = "SELECT * FROM chat WHERE id = ?";
+
     public static final String INSERT = """
             INSERT INTO chat(id) VALUES(?)
+            """;
+
+    public static final String SELECT_BY_LINK = """
+            SELECT chat.* FROM chat JOIN chat_link ON chat.id = chat_id
+            WHERE link_id = ?
             """;
 
     private final JdbcTemplate jdbcTemplate;
@@ -31,6 +37,11 @@ public class JdbcChatRepository implements ChatRepository {
     public Optional<Chat> findById(long id) {
         return jdbcTemplate.queryForStream(SELECT_BY_ID,
                 new BeanPropertyRowMapper<>(Chat.class), id).findFirst();
+    }
+
+    @Override
+    public List<Chat> findAllByLink(long linkId) {
+        return jdbcTemplate.query(SELECT_BY_LINK, new BeanPropertyRowMapper<>(Chat.class), linkId);
     }
 
     @Override

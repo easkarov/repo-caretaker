@@ -7,6 +7,7 @@ import ru.tinkoff.edu.java.scrapper.model.Link;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -68,6 +69,14 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public boolean removeFromChat(long chatId, long linkId) {
         return jdbcTemplate.update(JdbcLinkQueries.REMOVE_FROM_CHAT.query(), chatId, linkId) >= 1;
+    }
+
+    @Override
+    public List<Link> findLongUpdated() {
+        // TODO: custom allowed time-delta in parameters of method
+        int allowedMinutes = 15;
+        return jdbcTemplate.query(JdbcLinkQueries.SELECT_LONG_UPDATED.query(),
+                this::mapRowToLink, OffsetDateTime.now().minusMinutes(allowedMinutes));
     }
 
     private Link mapRowToLink(ResultSet row, int rowNum) throws SQLException {

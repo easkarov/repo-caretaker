@@ -11,6 +11,7 @@ public interface LinkRepository {
     List<Link> findAllByChat(long chatId);
     Optional<Link> findByUrl(String url);
     Optional<Link> findById(long id);
+    List<Link> findLongUpdated();
     Link save(Link link);
     boolean removeById(long id);
     boolean removeFromChat(long chatId, long linkId);

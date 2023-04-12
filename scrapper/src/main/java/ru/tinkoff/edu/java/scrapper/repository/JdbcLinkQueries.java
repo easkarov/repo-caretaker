@@ -47,6 +47,10 @@ public enum JdbcLinkQueries {
 
     ADD_TO_CHAT("""
             INSERT INTO chat_link VALUES(?, ?)
+            """),
+
+    SELECT_LONG_UPDATED("""
+                    SELECT * FROM link WHERE updated_at < ?
             """);
 
     private final String query;
@@ -56,4 +60,4 @@ public enum JdbcLinkQueries {
     }
 
 
-}
+    }

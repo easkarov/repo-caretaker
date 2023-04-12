@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface ChatRepository {
     List<Chat> findAll();
+    List<Chat> findAllByLink(long linkId);
     Optional<Chat> findById(long id);
     Chat save(Chat link);
     boolean removeById(long id);

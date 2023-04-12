@@ -10,6 +10,7 @@ public interface LinkRepository {
     List<Link> findAll();
     List<Link> findAllByChat(long chatId);
     Optional<Link> findByUrl(String url);
+    Optional<Link> findById(long id);
     Link save(Link link);
     boolean removeById(long id);
     boolean removeFromChat(long chatId, long linkId);

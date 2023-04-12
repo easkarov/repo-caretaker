@@ -8,17 +8,19 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public enum JdbcLinkQueries {
     INSERT("""
-            INSERT INTO link(url) VALUES(?);
-            SELECT * FROM link WHERE url = ?;
+            INSERT INTO link(url) VALUES(?)
             """),
 
     UPDATE("""
             UPDATE link SET url = ?, updated_at = ? WHERE id = ?
-            SELECT * FROM link WHERE id = ?
+            """),
+
+    SELECT_BY_URL("""
+            SELECT * FROM link WHERE url = ?
             """),
 
     SELECT_BY_ID("""
-            SELECT * FROM link WHERE url = ?
+            SELECT * FROM link WHERE id = ?
             """),
 
     SELECT_ALL("""

@@ -31,7 +31,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    public void addChat__ChatDoesntExistInDb_addedChat() {
+    public void save__ChatDoesntExistInDb_addedChat() {
         // given
         var chat = new Chat(444L);
 
@@ -48,7 +48,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    public void addChat__ChatAlreadyExistsInDb_throwException() {
+    public void save__ChatAlreadyExistsInDb_throwException() {
         // given
         var chat = new Chat(444L);
         chatRepository.save(chat);
@@ -59,7 +59,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    public void removeChat__ChatHasLinks_throwException() {
+    public void removeById__ChatHasLinks_throwException() {
         // given
         var link = new Link().setId(123L).setUrl("http://stackoverflow.com/123123");
         var chat = new Chat(444L);
@@ -74,7 +74,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    public void removeChat__ChatDoesntHaveLinks_oneRemovedLink() {
+    public void removeById__ChatDoesntHaveLinks_oneRemovedLink() {
         // given
         var chat = new Chat(444L);
         chatRepository.save(chat);

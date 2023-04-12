@@ -35,9 +35,7 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public Chat save(Chat chat) {
-        if (findById(chat.getId()).isEmpty()) {
-            jdbcTemplate.update(INSERT, chat.getId());
-        }
+        jdbcTemplate.update(INSERT, chat.getId());
         return chat;
     }
 

@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 
 @Repository
@@ -28,19 +29,25 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public Optional<Link> findByUrl(String url) {
-        List<Link> links = jdbcTemplate.query(JdbcLinkQueries.SELECT_BY_ID.query(), this::mapRowToLink, url);
-        return (links.isEmpty() ? Optional.empty() : Optional.of(links.get(0)));
+        Stream<Link> links = jdbcTemplate.queryForStream(JdbcLinkQueries.SELECT_BY_URL.query(), this::mapRowToLink, url);
+        return links.findFirst();
+    }
+
+    @Override
+    public Optional<Link> findById(long id) {
+        Stream<Link> links = jdbcTemplate.queryForStream(JdbcLinkQueries.SELECT_BY_ID.query(), this::mapRowToLink, id);
+        return links.findFirst();
     }
 
     @Override
     public Link save(Link link) {
         if (link.getId() == null) {
-            return jdbcTemplate.queryForObject(JdbcLinkQueries.INSERT.query(), this::mapRowToLink,
-                    link.getUrl(), link.getUrl());
+            jdbcTemplate.update(JdbcLinkQueries.INSERT.query(), link.getUrl());
+            return findByUrl(link.getUrl()).orElseThrow();
         }
 
-        return jdbcTemplate.queryForObject(JdbcLinkQueries.UPDATE.query(), this::mapRowToLink,
-                link.getUrl(), link.getUpdatedAt(), link.getId(), link.getId());
+        jdbcTemplate.update(JdbcLinkQueries.UPDATE.query(), link.getUrl(), link.getUpdatedAt(), link.getId());
+        return findById(link.getId()).orElseThrow();
     }
 
     @Override

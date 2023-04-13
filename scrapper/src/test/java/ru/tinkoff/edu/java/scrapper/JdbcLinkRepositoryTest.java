@@ -4,9 +4,11 @@ package ru.tinkoff.edu.java.scrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Link;
@@ -20,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @SpringBootTest
+@Rollback
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @Autowired
@@ -30,14 +34,15 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    public void save__LinkDoesntExistInDb_addedLink() {
+    @Sql({"/sql/fill_in_links.sql"})
+    public void save__LinkUrlDoesntExistInDb_addedLink() {
         // given
-        var link = new Link().setUrl("http://stackoverflow.com/123123");
+        var link = new Link().setUrl("https://meta.com");
 
         // when
         var addedLink = linkRepository.save(link);
 
-        // Корректнее ли было бы здесь проверять действительно была добавлена ссылка или нет?
+        // Корректнее ли было бы здесь проверять действительно была добавлена ссылка или нет с помощью jdbcTemplate?
         // Или достаточно проверять именно контракт метода (то, что он возаращает)?
 
         assertThat(addedLink.getUrl()).isEqualTo(link.getUrl());
@@ -45,10 +50,10 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
+    @Sql({"/sql/fill_in_links.sql"})
     public void save__LinkUrlAlreadyExistsInDb_throwException() {
         // given
-        var link = new Link().setUrl("http://stackoverflow.com/123123");
-        linkRepository.save(link);
+        var link = new Link().setUrl("https://stackoverflow.com/7777777");
 
         // when, then
         assertThrows(DataIntegrityViolationException.class, () -> linkRepository.save(link));
@@ -56,47 +61,45 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
+    @Sql("/sql/add_links_to_chats.sql")
     public void removeById__LinkIsBeingTrackedInChat_throwException() {
         // given
-        var link = new Link().setId(123L).setUrl("http://stackoverflow.com/123123");
-        var chatId = 777L;
-
-//        var addedLink = linkRepository.save(link);
-        jdbcTemplate.update("INSERT INTO link(id, url) VALUES(?, ?)", link.getId(), link.getUrl());
-        jdbcTemplate.update("INSERT INTO chat VALUES (?)", chatId);
-        jdbcTemplate.update("INSERT INTO chat_link VALUES (?, ?)", chatId, link.getId());
+        var linkId = 2222;
 
         // when, then
-        assertThrows(DataIntegrityViolationException.class, () -> linkRepository.removeById(link.getId()));
+        assertThrows(DataIntegrityViolationException.class, () -> linkRepository.removeById(linkId));
     }
 
     @Test
     @Transactional
+    @Sql("/sql/fill_in_links.sql")
     public void removeById__LinkIsNotBeingTrackedInChat_oneRemovedLink() {
         // given
-        var link = new Link().setId(123L).setUrl("http://stackoverflow.com/123123");
-        jdbcTemplate.update("INSERT INTO link(id, url) VALUES(?, ?)", link.getId(), link.getUrl());
-
-        // when
+        var linkId = linkRepository.findAll().get(0).getId();
 
         // Как тут корректнее тестировать? То, что linkRepository.removeById
         // возвращает true - удаление прошло успешно (таков контракт метода),
         // либо же проверять не контракт а смотреть по существу с помощью jdbcTemplate,
         // произошло ли удаление
 
+        // then
         // 1)
-        assertThat(linkRepository.removeById(link.getId())).isTrue();
+        assertThat(linkRepository.removeById(linkId)).isTrue();
 
         // 2)
         Boolean ifRemoved = jdbcTemplate.queryForObject("SELECT COUNT(*) = 0 FROM link WHERE id = ?",
-                Boolean.class, link.getId());
+                Boolean.class, linkId);
         assertThat(ifRemoved).isTrue();
     }
 
     @Test
     @Transactional
-    @Sql("/sql/fill_in_links.sql") // в целом удобно использовать авто SQL скрипты, но насколько оправдано?
+    @Sql("/sql/fill_in_links.sql") // в целом удобно использовать авто SQL скрипты,
+    // но насколько это часто используется в полевых условиях?
     public void findAll__SomeLinksInDb_listOfLinks() {
+        // given
+        var expectedSize = 3;
+
         // when
         List<Link> links = linkRepository.findAll();
 
@@ -104,7 +107,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         // которые есть в БД или достаточно проверить размер возвращаемого списка ссылок?
 
         // then
-        assertThat(links).hasSize(2);
+        assertThat(links).hasSize(expectedSize);
 
     }
 

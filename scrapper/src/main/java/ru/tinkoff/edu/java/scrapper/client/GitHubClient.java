@@ -37,4 +37,12 @@ public class GitHubClient {
                 .blockOptional();
 
     }
+
+    public static void main(String[] args) {
+        var config = new GitHubConfiguration("https://api.github.com", "2022-11-28");
+        var gh = GitHubClient.fromConfig(config);
+        System.out.println(gh.fetchRepository("EmiAsk", "spring-project"));
+//        System.out.println(gh.fetchRepository("EmiAsk", "spring-project"));
+
+    }
 }

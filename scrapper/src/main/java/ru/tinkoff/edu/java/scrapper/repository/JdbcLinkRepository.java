@@ -41,6 +41,14 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
+    public List<Link> findLongUpdated() {
+        // TODO: custom allowed time-delta in parameters of method
+        int allowedMinutes = 15;
+        return jdbcTemplate.query(JdbcLinkQueries.SELECT_LONG_UPDATED.query(),
+                this::mapRowToLink, OffsetDateTime.now().minusMinutes(allowedMinutes));
+    }
+
+    @Override
     public Link save(Link link) {
         if (link.getId() == null) {
             jdbcTemplate.update(JdbcLinkQueries.INSERT.query(), link.getUrl());
@@ -69,14 +77,6 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public boolean removeFromChat(long chatId, long linkId) {
         return jdbcTemplate.update(JdbcLinkQueries.REMOVE_FROM_CHAT.query(), chatId, linkId) >= 1;
-    }
-
-    @Override
-    public List<Link> findLongUpdated() {
-        // TODO: custom allowed time-delta in parameters of method
-        int allowedMinutes = 15;
-        return jdbcTemplate.query(JdbcLinkQueries.SELECT_LONG_UPDATED.query(),
-                this::mapRowToLink, OffsetDateTime.now().minusMinutes(allowedMinutes));
     }
 
     private Link mapRowToLink(ResultSet row, int rowNum) throws SQLException {

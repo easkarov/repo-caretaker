@@ -15,7 +15,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JdbcChatRepository implements ChatRepository {
 
-    public static final String SELECT_BY_ID = "SELECT * FROM chat WHERE id = ?";
+    public static final String SELECT_BY_ID = """
+            SELECT * FROM chat WHERE id = ?
+            """;
 
     public static final String INSERT = """
             INSERT INTO chat(id) VALUES(?)

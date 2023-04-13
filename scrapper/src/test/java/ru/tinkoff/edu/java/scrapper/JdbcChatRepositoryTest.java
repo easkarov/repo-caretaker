@@ -8,12 +8,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import util.IntegrationEnvironment;
 
+import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +38,11 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
         var chat = new Chat(444L);
 
         // when
-        chatRepository.save(chat);
+        var savedChat = chatRepository.save(chat);
+
+        assertThat(savedChat.getId()).isEqualTo(chat.getId());
+        savedChat = chatRepository.findAll().get(0);
+        assertThat(savedChat.getId()).isEqualTo(chat.getId());
 
         // then
         Chat addedChat = jdbcTemplate.queryForObject("SELECT * FROM chat WHERE id = ?",
@@ -59,43 +65,37 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    public void removeById__ChatHasLinks_throwException() {
+    @Sql("/sql/add_links_to_chats.sql")
+    public void removeById__chatHasLinks_throwException() {
         // given
-        var link = new Link().setId(123L).setUrl("http://stackoverflow.com/123123");
-        var chat = new Chat(444L);
-
-        chatRepository.save(chat);
-        jdbcTemplate.update("INSERT INTO link(id, url) VALUES (?, ?)", link.getId(), link.getUrl());
-        jdbcTemplate.update("INSERT INTO chat_link VALUES (?, ?)", chat.getId(), link.getId());
+        var chatId = 1;
 
         // when, then
-        assertThrows(DataIntegrityViolationException.class, () -> chatRepository.removeById(chat.getId()));
+        assertThrows(DataIntegrityViolationException.class, () -> chatRepository.removeById(chatId));
     }
 
     @Test
     @Transactional
-    public void removeById__ChatDoesntHaveLinks_oneRemovedLink() {
+    @Sql("/sql/add_links_to_chats.sql")
+    public void removeById__chatDoesntHaveLinks_oneRemovedChat() {
         // given
-        var chat = new Chat(444L);
-        chatRepository.save(chat);
+        var chatId = 4;
 
         // when
-        chatRepository.removeById(chat.getId());
+        Boolean ifRemoved = chatRepository.removeById(chatId);
+        assertThat(ifRemoved).isTrue();
+        assertThat(chatRepository.findAll()).hasSize(3);
 
         // then
-        Boolean ifRemoved = jdbcTemplate.queryForObject("SELECT COUNT(*) = 0 FROM chat WHERE id = ?",
-                Boolean.class, chat.getId());
-
+        ifRemoved = jdbcTemplate.queryForObject("SELECT COUNT(*) = 0 FROM chat WHERE id = ?",
+                Boolean.class, chatId);
         assertThat(ifRemoved).isTrue();
     }
 
     @Test
     @Transactional
+    @Sql("/sql/fill_in_chats.sql")
     public void findAll__listOfChats() {
-        // given
-        var chatsToAdd = List.of(new Chat(444L), new Chat(111L));
-        chatsToAdd.forEach(chatRepository::save);
-
         // when
         List<Chat> chats = chatRepository.findAll();
 

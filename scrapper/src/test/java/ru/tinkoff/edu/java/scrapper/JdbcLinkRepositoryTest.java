@@ -61,7 +61,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    @Sql("/sql/add_links_to_chats.sql")
+    @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void removeById__LinkIsBeingTrackedInChat_throwException() {
         // given
         var linkId = 2222;

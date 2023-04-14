@@ -22,7 +22,7 @@ public class BotClient {
         return new BotClient(webClient);
     }
 
-    public boolean createUpdate(LinkUpdate linkUpdate) {
+    public boolean sendUpdate(LinkUpdate linkUpdate) {
         return Boolean.TRUE.equals(webClient
                 .post()
                 .uri(BASE_URL)

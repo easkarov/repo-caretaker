@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.test.parser.util;
 
 import org.junit.jupiter.params.provider.Arguments;
-import ru.tinkoff.edu.java.parser.response.GitHubResponse;
+import ru.tinkoff.edu.java.parser.response.GitHubParsingResponse;
 
 import java.util.stream.Stream;
 
@@ -14,11 +14,11 @@ public class TestSamples {
 
     public static Stream<Arguments> provideGitHubValidLinks() {
 
-        Stream<GitHubResponse> input = Stream.of(
-                new GitHubResponse("user", "repo"),
-                new GitHubResponse("123", "123"),
-                new GitHubResponse("a-b-c", "a.b.c"),
-                new GitHubResponse("dot.dot.dot", "s-s-s")
+        Stream<GitHubParsingResponse> input = Stream.of(
+                new GitHubParsingResponse("user", "repo"),
+                new GitHubParsingResponse("123", "123"),
+                new GitHubParsingResponse("a-b-c", "a.b.c"),
+                new GitHubParsingResponse("dot.dot.dot", "s-s-s")
         );
 
         return input.flatMap(response -> Stream.of(

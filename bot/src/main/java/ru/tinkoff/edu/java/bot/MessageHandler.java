@@ -1,39 +1,40 @@
 package ru.tinkoff.edu.java.bot;
 
 import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.bot.enums.State;
 import ru.tinkoff.edu.java.bot.dto.HandledUpdate;
+import ru.tinkoff.edu.java.bot.enums.State;
+import ru.tinkoff.edu.java.bot.service.LinkService;
 
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class MessageHandler { ;
-    public final MessageSender messageSender;
+public class MessageHandler {
+    private final MessageSender messageSender;
+    private final LinkService linkService;
 
     // probably needs refactoring
     public HandledUpdate handle(Update update, State state) {
 
-        SendMessage request;
+        String message;
         State newState = State.NONE;
 
         switch (state) {
             case TRACK -> {
-                request = messageSender.send(update, "Got this link tracked, thanks.");
+                var response = linkService.trackLink(update.message().text(), update.message().chat().id());
+                message = (response.isPresent()) ? "Got this link tracked" : "Unable to track, sorry";
             }
             case UNTRACK -> {
-                request = messageSender.send(update, "Got this link untracked, thanks.");
+                var response = linkService.untrackLink(update.message().text(), update.message().chat().id());
+                message = (response.isPresent()) ? "Got this link untracked" : "Unable to untrack, sorry";
             }
-            default -> {
-                request = messageSender.send(update, "Unknown command. Try using /help.");
-            }
+            default -> message = "Unknown command. Try using /help.";
         }
 
         return HandledUpdate.builder()
-                .request(Optional.of(request))
+                .request(Optional.of(messageSender.send(update, message)))
                 .newState(newState)
                 .build();
     }

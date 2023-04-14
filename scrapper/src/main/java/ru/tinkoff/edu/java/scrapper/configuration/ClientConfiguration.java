@@ -30,8 +30,4 @@ public class ClientConfiguration {
         return BotClient.create();
     }
 
-    @Bean
-    public long linkUpdateSchedulerIntervalMs(ApplicationConfig config) {
-        return config.scheduler().interval().toMillis();
-    }
 }

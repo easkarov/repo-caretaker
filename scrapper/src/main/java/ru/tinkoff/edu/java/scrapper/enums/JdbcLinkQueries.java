@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.repository;
+package ru.tinkoff.edu.java.scrapper.enums;
 
 
 import lombok.Getter;
@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 public enum JdbcLinkQueries {
+
     INSERT("""
             INSERT INTO link(url) VALUES(?)
             """),

@@ -37,16 +37,14 @@ public class ListCommandHandler implements CommandHandler<SendMessage, SendRespo
     public SendMessage handle(Update update) {
         List<LinkResponse> linkResponses = linkService.getAllLinks(update.message().chat().id());
 
-        if (linkResponses.isEmpty()) {
-            return messageSender.send(update, "There are no tracked links :(");
-        }
+        if (linkResponses.isEmpty()) return messageSender.send(update, "There are no tracked links");
 
-        var message = linkResponses
+        var linksMsg = linkResponses
                 .stream()
                 .map(LinkResponse::url)
                 .map(URI::toString)
                 .collect(Collectors.joining("\n"));
 
-        return messageSender.send(update, message);
+        return messageSender.send(update, "Your links:\n%s".formatted(linksMsg));
     }
 }

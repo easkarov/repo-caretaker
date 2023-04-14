@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.parser;
 
-import ru.tinkoff.edu.java.parser.response.BaseResponse;
-import ru.tinkoff.edu.java.parser.response.StackOverflowResponse;
+import ru.tinkoff.edu.java.parser.response.ParsingResponse;
+import ru.tinkoff.edu.java.parser.response.StackOverflowParsingResponse;
 
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -10,12 +10,12 @@ public class StackOverflowParser extends LinkChainParser {
     private static final String QID_REGEX = "^https://stackoverflow\\.com/questions/(\\d+)(/|$)";
 
     @Override
-    public Optional<BaseResponse> parse(String text) {
+    public Optional<ParsingResponse> parse(String text) {
         var pattern = Pattern.compile(QID_REGEX);
         var matcher = pattern.matcher(text.trim());
         if (matcher.find()) {
             String questionId = matcher.group(1);
-            return Optional.of(new StackOverflowResponse(questionId));
+            return Optional.of(new StackOverflowParsingResponse(Integer.parseInt(questionId)));
         }
         return parseNext(text);
     }

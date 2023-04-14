@@ -10,7 +10,8 @@ spring:
 
 app:
   scheduler:
-    interval: 2000
+    interval: 15S
+  link-update-age: 15S
 
 server:
   port: 8080

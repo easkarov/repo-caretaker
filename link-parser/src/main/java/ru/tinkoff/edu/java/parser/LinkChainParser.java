@@ -1,6 +1,6 @@
 package ru.tinkoff.edu.java.parser;
 
-import ru.tinkoff.edu.java.parser.response.BaseResponse;
+import ru.tinkoff.edu.java.parser.response.ParsingResponse;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ public abstract class LinkChainParser implements LinkParser {
         return first;
     }
 
-    protected Optional<BaseResponse> parseNext(String text) {
+    protected Optional<ParsingResponse> parseNext(String text) {
         return (next == null) ? Optional.empty() : next.parse(text);
     }
 }

@@ -3,11 +3,13 @@ package ru.tinkoff.edu.java.scrapper.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.tinkoff.edu.java.scrapper.enums.JdbcLinkQueries;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -41,11 +43,9 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<Link> findLongUpdated() {
-        // TODO: custom allowed time-delta in parameters of method
-        int allowedMinutes = 15;
+    public List<Link> findLongUpdated(TemporalAmount delta) {
         return jdbcTemplate.query(JdbcLinkQueries.SELECT_LONG_UPDATED.query(),
-                this::mapRowToLink, OffsetDateTime.now().minusMinutes(allowedMinutes));
+                this::mapRowToLink, OffsetDateTime.now().minus(delta));
     }
 
     @Override
@@ -83,6 +83,6 @@ public class JdbcLinkRepository implements LinkRepository {
         return new Link()
                 .setId(row.getLong("id"))
                 .setUrl(row.getString("url"))
-                .setUpdatedAt(row.getTimestamp("updated_at").toInstant());
+                .setUpdatedAt(row.getObject("updated_at", OffsetDateTime.class));
     }
 }

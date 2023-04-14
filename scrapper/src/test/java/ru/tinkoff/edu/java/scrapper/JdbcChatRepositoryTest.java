@@ -11,11 +11,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
-import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import util.IntegrationEnvironment;
 
-import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,7 +63,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    @Sql("/sql/add_links_to_chats.sql")
+    @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void removeById__chatHasLinks_throwException() {
         // given
         var chatId = 1;
@@ -76,7 +74,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
 
     @Test
     @Transactional
-    @Sql("/sql/add_links_to_chats.sql")
+    @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void removeById__chatDoesntHaveLinks_oneRemovedChat() {
         // given
         var chatId = 4;

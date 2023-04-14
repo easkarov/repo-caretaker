@@ -3,8 +3,8 @@ package ru.tinkoff.edu.java.test.parser;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import ru.tinkoff.edu.java.parser.GitHubParser;
-import ru.tinkoff.edu.java.parser.response.BaseResponse;
-import ru.tinkoff.edu.java.parser.response.GitHubResponse;
+import ru.tinkoff.edu.java.parser.response.ParsingResponse;
+import ru.tinkoff.edu.java.parser.response.GitHubParsingResponse;
 
 import java.util.Optional;
 
@@ -20,13 +20,13 @@ public class GithubParserTest {
         // given
 
         // when
-        Optional<BaseResponse> response = gitHubParser.parse(url);
+        Optional<ParsingResponse> response = gitHubParser.parse(url);
 
         // then
         assertThat(response).isNotEmpty();
-        assertThat(response.get()).isInstanceOf(GitHubResponse.class);
+        assertThat(response.get()).isInstanceOf(GitHubParsingResponse.class);
 
-        var githubResponse = (GitHubResponse) response.get();
+        var githubResponse = (GitHubParsingResponse) response.get();
         assertAll("Validate user and repo in response",
                 () -> assertThat(githubResponse.user()).isEqualTo(expectedUser),
                 () -> assertThat(githubResponse.repo()).isEqualTo(expectedRepo));
@@ -38,7 +38,7 @@ public class GithubParserTest {
         // given
 
         // when
-        Optional<BaseResponse> response = gitHubParser.parse(url);
+        Optional<ParsingResponse> response = gitHubParser.parse(url);
 
         // then
         assertThat(response).isEmpty();

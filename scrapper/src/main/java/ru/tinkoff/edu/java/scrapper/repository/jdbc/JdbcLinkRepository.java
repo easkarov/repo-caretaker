@@ -1,7 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Primary;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.enums.JdbcLinkQueries;
@@ -16,7 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-@Primary
+
+@Slf4j
+//@Primary
 @Repository
 @RequiredArgsConstructor
 public class JdbcLinkRepository implements LinkRepository {
@@ -53,6 +55,7 @@ public class JdbcLinkRepository implements LinkRepository {
     @Override
     public Link save(Link link) {
         if (link.getId() == null) {
+            log.info(link.toString());
             jdbcTemplate.update(JdbcLinkQueries.INSERT.query(), link.getUrl());
             return findByUrl(link.getUrl()).orElseThrow();
         }

@@ -34,6 +34,7 @@ public class ScrapperClient {
                 .body(BodyInserters.fromValue(new AddLinkRequest(url)))
                 .retrieve()
                 .bodyToMono(LinkResponse.class)
+                .onErrorResume(exception -> Mono.empty())
                 .blockOptional();
     }
 
@@ -45,6 +46,7 @@ public class ScrapperClient {
                 .body(BodyInserters.fromValue(new RemoveLinkRequest(url)))
                 .retrieve()
                 .bodyToMono(LinkResponse.class)
+                .onErrorResume(exception -> Mono.empty())
                 .blockOptional();
     }
 
@@ -55,6 +57,7 @@ public class ScrapperClient {
                 .header(TG_CHAT_HEADER, String.valueOf(chatId))
                 .retrieve()
                 .bodyToMono(ListLinkResponse.class)
+                .onErrorResume(exception -> Mono.empty())
                 .block();
     }
 

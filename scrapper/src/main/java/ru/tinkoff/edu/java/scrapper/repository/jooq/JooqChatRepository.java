@@ -2,6 +2,7 @@ package ru.tinkoff.edu.java.scrapper.repository.jooq;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
@@ -9,10 +10,11 @@ import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import java.util.List;
 import java.util.Optional;
 
-import static ru.tinkoff.edu.java.scrapper.model.jooq.public_.tables.Chat.CHAT;
-import static ru.tinkoff.edu.java.scrapper.model.jooq.public_.tables.ChatLink.CHAT_LINK;
+import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.Chat.CHAT;
+import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.ChatLink.CHAT_LINK;
 
 
+@Primary
 @Repository
 @RequiredArgsConstructor
 public class JooqChatRepository implements ChatRepository {

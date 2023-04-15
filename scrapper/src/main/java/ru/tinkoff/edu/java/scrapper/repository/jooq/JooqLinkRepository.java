@@ -3,8 +3,10 @@ package ru.tinkoff.edu.java.scrapper.repository.jooq;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.model.Link;
+import ru.tinkoff.edu.java.scrapper.model.jooq.tables.records.LinkRecord;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
 import java.time.OffsetDateTime;
@@ -12,17 +14,18 @@ import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Optional;
 
-import static ru.tinkoff.edu.java.scrapper.model.jooq.public_.tables.ChatLink.CHAT_LINK;
-import static ru.tinkoff.edu.java.scrapper.model.jooq.public_.tables.Link.LINK;
+import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.ChatLink.CHAT_LINK;
+import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.Link.LINK;
 
 
+@Primary
 @Repository
 @RequiredArgsConstructor
 public class JooqLinkRepository implements LinkRepository {
     private final DSLContext dsl;
 
     public List<Link> findAll() {
-        return dsl.select(LINK.fields()).fetchInto(Link.class);
+        return dsl.select(LINK.fields()).fetch(r -> mapToLink((LinkRecord) r));
     }
 
 
@@ -31,8 +34,10 @@ public class JooqLinkRepository implements LinkRepository {
         return dsl.select(LINK.fields())
                 .from(LINK)
                 .join(CHAT_LINK)
-                .on(LINK.ID.eq(CHAT_LINK.LINK_ID)).where(CHAT_LINK.CHAT_ID.eq(chatId))
-                .fetchInto(Link.class);
+                .on(LINK.ID.eq(CHAT_LINK.LINK_ID))
+                .where(CHAT_LINK.CHAT_ID.eq(chatId))
+                .fetch()
+                .map(r -> mapToLink((LinkRecord) r));
     }
 
     @Override
@@ -40,7 +45,7 @@ public class JooqLinkRepository implements LinkRepository {
         return dsl.select(LINK.fields())
                 .from(LINK)
                 .where(LINK.URL.eq(url))
-                .fetchOptionalInto(Link.class);
+                .fetchOptional(r -> mapToLink((LinkRecord) r));
     }
 
     @Override
@@ -48,7 +53,7 @@ public class JooqLinkRepository implements LinkRepository {
         return dsl.select(LINK.fields())
                 .from(LINK)
                 .where(LINK.ID.eq(id))
-                .fetchOptionalInto(Link.class);
+                .fetchOptional(r -> mapToLink((LinkRecord) r));
     }
 
     @Override
@@ -56,7 +61,9 @@ public class JooqLinkRepository implements LinkRepository {
         return dsl.select(LINK.fields())
                 .from(LINK)
                 .where(LINK.UPDATED_AT.lessThan(OffsetDateTime.now().minus(delta)))
-                .fetchInto(Link.class);
+                .fetch()
+                .map(r -> mapToLink((LinkRecord) r));
+
     }
 
     @Override
@@ -65,7 +72,7 @@ public class JooqLinkRepository implements LinkRepository {
             return dsl.insertInto(LINK, LINK.URL)
                     .values(link.getUrl())
                     .returning(LINK.fields())
-                    .fetchAnyInto(Link.class);
+                    .fetchOne(this::mapToLink);
         }
 
         return dsl.update(LINK)
@@ -74,7 +81,8 @@ public class JooqLinkRepository implements LinkRepository {
                 .set(LINK.UPDATED_AT, link.getUpdatedAt())
                 .where(LINK.ID.eq(link.getId()))
                 .returning(LINK.fields())
-                .fetchOptionalInto(Link.class).orElseThrow();
+                .fetchOptional(this::mapToLink)
+                .orElseThrow();
     }
 
     @Override
@@ -95,5 +103,13 @@ public class JooqLinkRepository implements LinkRepository {
         return dsl.deleteFrom(CHAT_LINK)
                 .where(CHAT_LINK.CHAT_ID.eq(chatId), CHAT_LINK.LINK_ID.eq(linkId))
                 .execute() == 1;
+    }
+
+    private Link mapToLink(LinkRecord link) {
+        return new Link()
+                .setId(link.getId())
+                .setUrl(link.getUrl())
+                .setUpdatedAt(link.getUpdatedAt())
+                .setUpdateData(link.getUpdateData().toString());
     }
 }

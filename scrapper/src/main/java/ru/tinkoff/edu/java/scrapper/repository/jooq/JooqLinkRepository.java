@@ -25,7 +25,7 @@ public class JooqLinkRepository implements LinkRepository {
     private final DSLContext dsl;
 
     public List<Link> findAll() {
-        return dsl.select(LINK.fields()).fetch(r -> mapToLink((LinkRecord) r));
+        return dsl.selectFrom(LINK).fetch(this::mapToLink);
     }
 
 
@@ -36,34 +36,29 @@ public class JooqLinkRepository implements LinkRepository {
                 .join(CHAT_LINK)
                 .on(LINK.ID.eq(CHAT_LINK.LINK_ID))
                 .where(CHAT_LINK.CHAT_ID.eq(chatId))
-                .fetch()
-                .map(r -> mapToLink((LinkRecord) r));
+                .fetchGroups(LINK)
+                .keySet().stream().map(this::mapToLink).toList();
     }
 
     @Override
     public Optional<Link> findByUrl(String url) {
-        return dsl.select(LINK.fields())
-                .from(LINK)
+        return dsl.selectFrom(LINK)
                 .where(LINK.URL.eq(url))
-                .fetchOptional(r -> mapToLink((LinkRecord) r));
+                .fetchOptional(this::mapToLink);
     }
 
     @Override
     public Optional<Link> findById(long id) {
-        return dsl.select(LINK.fields())
-                .from(LINK)
+        return dsl.selectFrom(LINK)
                 .where(LINK.ID.eq(id))
-                .fetchOptional(r -> mapToLink((LinkRecord) r));
+                .fetchOptional(this::mapToLink);
     }
 
     @Override
     public List<Link> findLongUpdated(TemporalAmount delta) {
-        return dsl.select(LINK.fields())
-                .from(LINK)
+        return dsl.selectFrom(LINK)
                 .where(LINK.UPDATED_AT.lessThan(OffsetDateTime.now().minus(delta)))
-                .fetch()
-                .map(r -> mapToLink((LinkRecord) r));
-
+                .fetch(this::mapToLink);
     }
 
     @Override
@@ -92,8 +87,10 @@ public class JooqLinkRepository implements LinkRepository {
 
     @Override
     public boolean addToChat(long chatId, long linkId) {
-        // TODO: add precondition: link doesn't exist in chat
-        return dsl.insertInto(CHAT_LINK, CHAT_LINK.fields())
+        var ifExists = dsl.selectFrom(CHAT_LINK)
+                .where(CHAT_LINK.CHAT_ID.eq(chatId), CHAT_LINK.LINK_ID.eq(linkId))
+                .fetchOptional().isEmpty();
+        return ifExists && dsl.insertInto(CHAT_LINK, CHAT_LINK.fields())
                 .values(chatId, linkId)
                 .execute() == 1;
     }

@@ -13,7 +13,7 @@ public enum JdbcLinkQueries {
             """),
 
     UPDATE("""
-            UPDATE link SET url = ?, updated_at = ? WHERE id = ?
+            UPDATE link SET url = ?, update_data = ?::jsonb, updated_at = ? WHERE id = ?
             """),
 
     SELECT_BY_URL("""

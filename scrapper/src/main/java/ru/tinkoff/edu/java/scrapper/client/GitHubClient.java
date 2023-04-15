@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.client;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.tinkoff.edu.java.scrapper.configuration.GitHubConfiguration;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
 
 
 @RequiredArgsConstructor
+@Slf4j
 public class GitHubClient {
     private static final String REPO_ENDPOINT = "/repos/%s/%s";
     private static final String COMMIT_ENDPOINT = "/repos/%s/%s/commits?per_page=%s&page=%s";
@@ -21,8 +23,8 @@ public class GitHubClient {
         WebClient webClient = WebClient.builder()
                 .baseUrl(config.baseUrl())
                 .defaultHeader("X-GitHub-Api-Version", config.apiVersion())
+                .defaultHeader("Authorization", "Bearer %s".formatted(config.apiKey()))
                 .build();
-
         return new GitHubClient(webClient);
 
     }

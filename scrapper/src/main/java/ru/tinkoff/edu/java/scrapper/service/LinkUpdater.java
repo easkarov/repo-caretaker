@@ -73,14 +73,10 @@ public class LinkUpdater {
                     var objectMapper = new ObjectMapper();
                     var githubCriteria = objectMapper.readValue(link.getUpdateData(), GithubUpdateCriteria.class);
 
-                    Integer dbCommitsNumber = githubCriteria.commitsNumber();
+                    Integer dbCommitsNumber = githubCriteria.getCommitsNumber();
 
-                    if (dbCommitsNumber == null) {
-                        githubCriteria.commitsNumber(curCommitsNumber.get());
-                        link.setUpdatedAt(OffsetDateTime.now());
-                        link.setUpdateData(objectMapper.writeValueAsString(githubCriteria));
-                    } else if (dbCommitsNumber.equals(curCommitsNumber.get())) {
-                        githubCriteria.commitsNumber(curCommitsNumber.get());
+                    if (dbCommitsNumber == null || !dbCommitsNumber.equals(curCommitsNumber.get())) {
+                        githubCriteria.setCommitsNumber(curCommitsNumber.get());
                         link.setUpdatedAt(OffsetDateTime.now());
                         link.setUpdateData(objectMapper.writeValueAsString(githubCriteria));
                         updatedLinks.add(link);

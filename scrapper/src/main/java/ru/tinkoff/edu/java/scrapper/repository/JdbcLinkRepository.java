@@ -58,7 +58,7 @@ public class JdbcLinkRepository implements LinkRepository {
         }
 
         jdbcTemplate.update(JdbcLinkQueries.UPDATE.query(),
-                link.getUrl(), link.getUpdatedAt(), link.getUpdateData(), link.getId());
+                link.getUrl(), link.getUpdateData(), link.getUpdatedAt(), link.getId());
         return findById(link.getId()).orElseThrow();
     }
 

@@ -1,3 +1,3 @@
 # SpringProject
 
-Used techonologies: Spring, PostgreSQL, Liquibase, Docker, Kafka
+Used techonologies: Spring, PostgreSQL, Liquibase, Docker, Kafka, RabbitMQ

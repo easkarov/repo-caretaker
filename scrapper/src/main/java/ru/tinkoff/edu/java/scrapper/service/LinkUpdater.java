@@ -30,6 +30,7 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -51,7 +52,7 @@ public class LinkUpdater {
     // needs decomposing
     @Transactional
     public void update() throws JsonProcessingException {
-        ArrayList<Link> updatedLinks = new ArrayList<>();
+        ArrayList<Map.Entry<Link, String>> updatedLinks = new ArrayList<>();
 
         for (var link : linkRepository.findLongUpdated(updateAge)) {
             var parsingResult = parseUrl(link.getUrl());
@@ -63,7 +64,7 @@ public class LinkUpdater {
                     var response = stackOverflowClient.fetchQuestion(r.questionId());
                     if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
                         link.setUpdatedAt(response.get().updatedAt());
-                        updatedLinks.add(link);
+                        updatedLinks.add(Map.entry(link, "SOF Link has been updated!"));
                     }
                 }
                 case GitHubParsingResponse r -> {
@@ -79,13 +80,13 @@ public class LinkUpdater {
                         githubCriteria.setCommitsNumber(curCommitsNumber.get());
                         link.setUpdatedAt(OffsetDateTime.now());
                         link.setUpdateData(objectMapper.writeValueAsString(githubCriteria));
-                        updatedLinks.add(link);
+                        updatedLinks.add(Map.entry(link, "Detected new commits on repository!"));
                     }
                 }
             }
         }
 
-        updatedLinks.forEach(linkRepository::save);
+        updatedLinks.forEach((pair -> linkRepository.save(pair.getKey())));
         notifyBot(updatedLinks);
     }
 
@@ -94,12 +95,13 @@ public class LinkUpdater {
         return parser.parse(url);
     }
 
-    public void notifyBot(List<Link> links) {
-        for (var link : links) {
+    public void notifyBot(List<Map.Entry<Link, String>> linkPairs) {
+        for (var pair : linkPairs) {
+            var link = pair.getKey();
             List<Chat> linkChats = chatRepository.findAllByLink(link.getId());
             LinkUpdate update = LinkUpdate.builder()
                     .id(link.getId())
-                    .description("Link has been updated")
+                    .description(pair.getValue())
                     .tgChatIds(linkChats.stream().map(Chat::getId).toList())
                     .url(URI.create(link.getUrl()))
                     .build();

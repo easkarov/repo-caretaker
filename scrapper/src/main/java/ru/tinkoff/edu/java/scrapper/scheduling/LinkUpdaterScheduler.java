@@ -1,16 +1,12 @@
 package ru.tinkoff.edu.java.scrapper.scheduling;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import ru.tinkoff.edu.java.scrapper.client.BotClient;
-import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 import ru.tinkoff.edu.java.scrapper.service.LinkUpdater;
-
-import java.net.URI;
-import java.util.List;
 
 
 @Slf4j
@@ -21,6 +17,11 @@ public class LinkUpdaterScheduler {
 
     @Scheduled(fixedDelayString = "#{@linkUpdateSchedulerIntervalMs}")
     public void update() {
-        linkUpdater.update();
+        try {
+            linkUpdater.update();
+            log.info("All old links updated successfully");
+        } catch (JsonProcessingException ignored) {
+            log.info("Error occurred while updating");
+        }
     }
 }

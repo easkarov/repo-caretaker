@@ -2,17 +2,18 @@ package ru.tinkoff.edu.java.scrapper.client;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import ru.tinkoff.edu.java.scrapper.configuration.GitHubConfiguration;
 import ru.tinkoff.edu.java.scrapper.dto.response.GitHubRepositoryResponse;
 
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 
 @RequiredArgsConstructor
 public class GitHubClient {
-    private static final String GET_REPO_ENDPOINT = "/repos/%s/%s";
+    private static final String REPO_ENDPOINT = "/repos/%s/%s";
+    private static final String COMMIT_ENDPOINT = "/repos/%s/%s/commits?per_page=%s&page=%s";
 
     private final WebClient webClient;
 
@@ -27,22 +28,32 @@ public class GitHubClient {
     }
 
     public Optional<GitHubRepositoryResponse> fetchRepository(String owner, String repo) {
-        String uri = String.format(GET_REPO_ENDPOINT, owner, repo);
+        String uri = String.format(REPO_ENDPOINT, owner, repo);
 
         return webClient.get()
                 .uri(uri)
                 .retrieve()
                 .bodyToMono(GitHubRepositoryResponse.class)
-                .onErrorResume(WebClientResponseException.class, exception -> Mono.empty())
+                .onErrorResume(exception -> Mono.empty())
                 .blockOptional();
 
     }
 
-    public static void main(String[] args) {
-        var config = new GitHubConfiguration("https://api.github.com", "2022-11-28");
-        var gh = GitHubClient.fromConfig(config);
-        System.out.println(gh.fetchRepository("EmiAsk", "spring-project"));
-//        System.out.println(gh.fetchRepository("EmiAsk", "spring-project"));
+    public Optional<Integer> fetchCommitsNumber(String owner, String repo) {
+        Pattern pattern = Pattern.compile("next.*page=(?<number>\\d+).*last");
+        String uri = String.format(COMMIT_ENDPOINT, owner, repo, 1, 1);
 
+        // get last page number from header (GitHub api specific)
+        var header = webClient.get()
+                .uri(uri)
+                .exchangeToMono(response -> Mono.just(response.headers().header("link").get(0)))
+                .onErrorResume(exception -> Mono.empty())
+                .blockOptional();
+
+        return header.map(h -> {
+            var matcher = pattern.matcher(header.get());
+            matcher.find();
+            return Integer.parseInt(matcher.group("number"));
+        });
     }
 }

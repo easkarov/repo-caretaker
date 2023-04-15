@@ -1,7 +1,9 @@
 package ru.tinkoff.edu.java.scrapper.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.codec.cbor.Jackson2CborDecoder;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.enums.JdbcLinkQueries;
 import ru.tinkoff.edu.java.scrapper.model.Link;
@@ -55,7 +57,8 @@ public class JdbcLinkRepository implements LinkRepository {
             return findByUrl(link.getUrl()).orElseThrow();
         }
 
-        jdbcTemplate.update(JdbcLinkQueries.UPDATE.query(), link.getUrl(), link.getUpdatedAt(), link.getId());
+        jdbcTemplate.update(JdbcLinkQueries.UPDATE.query(),
+                link.getUrl(), link.getUpdatedAt(), link.getUpdateData(), link.getId());
         return findById(link.getId()).orElseThrow();
     }
 
@@ -83,6 +86,7 @@ public class JdbcLinkRepository implements LinkRepository {
         return new Link()
                 .setId(row.getLong("id"))
                 .setUrl(row.getString("url"))
-                .setUpdatedAt(row.getObject("updated_at", OffsetDateTime.class));
+                .setUpdatedAt(row.getObject("updated_at", OffsetDateTime.class))
+                .setUpdateData(row.getString("update_data"));
     }
 }

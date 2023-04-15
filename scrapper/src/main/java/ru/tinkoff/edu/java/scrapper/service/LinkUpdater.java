@@ -1,6 +1,8 @@
 package ru.tinkoff.edu.java.scrapper.service;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,12 +20,14 @@ import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
+import ru.tinkoff.edu.java.scrapper.model.GithubUpdateCriteria;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.JdbcChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.JdbcLinkRepository;
 
 import java.net.URI;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,8 +47,10 @@ public class LinkUpdater {
     @Value("#{@linkUpdateAge}")
     private final Duration updateAge;
 
+
+    // needs decomposing
     @Transactional
-    public void update() {
+    public void update() throws JsonProcessingException {
         ArrayList<Link> updatedLinks = new ArrayList<>();
 
         for (var link : linkRepository.findLongUpdated(updateAge)) {
@@ -61,9 +67,22 @@ public class LinkUpdater {
                     }
                 }
                 case GitHubParsingResponse r -> {
-                    var response = gitHubClient.fetchRepository(r.user(), r.repo());
-                    if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
-                        link.setUpdatedAt(response.get().updatedAt());
+                    var curCommitsNumber = gitHubClient.fetchCommitsNumber(r.user(), r.repo());
+                    if (curCommitsNumber.isEmpty()) continue;
+
+                    var objectMapper = new ObjectMapper();
+                    var githubCriteria = objectMapper.readValue(link.getUpdateData(), GithubUpdateCriteria.class);
+
+                    Integer dbCommitsNumber = githubCriteria.commitsNumber();
+
+                    if (dbCommitsNumber == null) {
+                        githubCriteria.commitsNumber(curCommitsNumber.get());
+                        link.setUpdatedAt(OffsetDateTime.now());
+                        link.setUpdateData(objectMapper.writeValueAsString(githubCriteria));
+                    } else if (dbCommitsNumber.equals(curCommitsNumber.get())) {
+                        githubCriteria.commitsNumber(curCommitsNumber.get());
+                        link.setUpdatedAt(OffsetDateTime.now());
+                        link.setUpdateData(objectMapper.writeValueAsString(githubCriteria));
                         updatedLinks.add(link);
                     }
                 }

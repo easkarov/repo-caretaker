@@ -12,4 +12,5 @@ public class Link {
     private Long id;
     private String url;
     private OffsetDateTime updatedAt;
+    private String updateData;
 }

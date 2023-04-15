@@ -10,8 +10,8 @@ import ru.tinkoff.edu.java.parser.GitHubParser;
 import ru.tinkoff.edu.java.parser.LinkChainParser;
 import ru.tinkoff.edu.java.parser.LinkParser;
 import ru.tinkoff.edu.java.parser.StackOverflowParser;
-import ru.tinkoff.edu.java.parser.response.ParsingResponse;
 import ru.tinkoff.edu.java.parser.response.GitHubParsingResponse;
+import ru.tinkoff.edu.java.parser.response.ParsingResponse;
 import ru.tinkoff.edu.java.parser.response.StackOverflowParsingResponse;
 import ru.tinkoff.edu.java.scrapper.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
@@ -19,8 +19,8 @@ import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.JdbcChatRepository;
-import ru.tinkoff.edu.java.scrapper.repository.JdbcLinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
 import java.net.URI;
 import java.time.Duration;
@@ -31,10 +31,10 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class LinkUpdater {
+public class LinkUpdater implements Updater {
 
-    private final JdbcLinkRepository linkRepository;
-    private final JdbcChatRepository chatRepository;
+    private final LinkRepository linkRepository;
+    private final ChatRepository chatRepository;
 
     private final BotClient botClient;
     private final GitHubClient gitHubClient;
@@ -44,6 +44,7 @@ public class LinkUpdater {
     private final Duration updateAge;
 
     @Transactional
+    @Override
     public void update() {
         ArrayList<Link> updatedLinks = new ArrayList<>();
 

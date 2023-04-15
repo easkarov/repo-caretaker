@@ -73,11 +73,11 @@ public class LinkUpdater implements Updater {
     public Optional<Map.Entry<Link, String>> processSOFLink(Link link, StackOverflowParsingResponse response) {
         var updateDescriptions = new ArrayList<String>();
 
-        // check if something was updated
+        // check if question was updated
         var question = stackOverflowClient.fetchQuestion(response.questionId());
         if (question.isPresent() && !link.getUpdatedAt().equals(question.get().updatedAt())) {
             link.setUpdatedAt(question.get().updatedAt());
-            updateDescriptions.add("SOF Link has been updated!");
+            updateDescriptions.add("SOF question has been updated!");
         }
 
         if (updateDescriptions.size() == 0)
@@ -91,6 +91,13 @@ public class LinkUpdater implements Updater {
         var mapper = new ObjectMapper();
         var updateData = mapper.readValue(link.getUpdateData(), GithubUpdateData.class);
         var updateDescriptions = new ArrayList<String>();
+
+        // check if repository was updated
+        var repository = gitHubClient.fetchRepository(response.user(), response.repo());
+        if (repository.isPresent() && !link.getUpdatedAt().equals(repository.get().updatedAt())) {
+            link.setUpdatedAt(repository.get().updatedAt());
+            updateDescriptions.add("Repository has been updated!");
+        }
 
         // check on new commits
         var curCommitsNumber = gitHubClient.fetchCommitsNumber(response.user(), response.repo());

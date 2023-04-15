@@ -23,6 +23,10 @@ public enum JdbcChatQueries {
     SELECT_BY_LINK("""
             SELECT chat.* FROM chat JOIN chat_link ON chat.id = chat_id
             WHERE link_id = ?
+            """),
+
+    REMOVE_BY_ID("""
+                DELETE FROM chat WHERE id = ?
             """);
 
     private final String query;

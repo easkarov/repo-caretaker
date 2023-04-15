@@ -42,7 +42,7 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public boolean removeById(long id) {
-        return jdbcTemplate.update("DELETE FROM chat WHERE id = ?", id) >= 1;
+        return jdbcTemplate.update(JdbcChatQueries.REMOVE_BY_ID.query(), id) == 1;
     }
 
 }

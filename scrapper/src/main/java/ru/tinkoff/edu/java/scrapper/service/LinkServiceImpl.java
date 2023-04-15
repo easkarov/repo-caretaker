@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqLinkRepository;
-import ru.tinkoff.edu.java.scrapper.service.LinkService;
+import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LinkServiceImpl implements LinkService {
 
-    private final JooqLinkRepository linkRepository;
+    private final LinkRepository linkRepository;
 
     @Transactional
     @Override

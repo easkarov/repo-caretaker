@@ -25,7 +25,7 @@ public class JooqChatRepository implements ChatRepository {
 
     @Override
     public Optional<Chat> findById(long id) {
-        return dsl.select(CHAT.fields()).from(CHAT).where(CHAT.ID.eq((int) id)).fetchOptionalInto(Chat.class);
+        return dsl.select(CHAT.fields()).from(CHAT).where(CHAT.ID.eq(id)).fetchOptionalInto(Chat.class);
     }
 
     @Override
@@ -34,21 +34,21 @@ public class JooqChatRepository implements ChatRepository {
                 .from(CHAT)
                 .join(CHAT_LINK)
                 .on(CHAT.ID.eq(CHAT_LINK.CHAT_ID))
-                .where(CHAT_LINK.LINK_ID.eq((int) linkId))
+                .where(CHAT_LINK.LINK_ID.eq(linkId))
                 .fetchInto(Chat.class);
     }
 
     @Override
     public Chat save(Chat chat) {
         return dsl.insertInto(CHAT, CHAT.ID)
-                .values((int) chat.getId())
+                .values(chat.getId())
                 .returning(CHAT.fields())
                 .fetchAnyInto(Chat.class);
     }
 
     @Override
     public boolean removeById(long id) {
-        return dsl.deleteFrom(CHAT).where(CHAT.ID.eq((int) id)).execute() == 1;
+        return dsl.deleteFrom(CHAT).where(CHAT.ID.eq(id)).execute() == 1;
     }
 
 }

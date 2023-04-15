@@ -31,7 +31,7 @@ public class JooqLinkRepository implements LinkRepository {
         return dsl.select(LINK.fields())
                 .from(LINK)
                 .join(CHAT_LINK)
-                .on(LINK.ID.eq(CHAT_LINK.LINK_ID)).where(CHAT_LINK.CHAT_ID.eq((int) chatId))
+                .on(LINK.ID.eq(CHAT_LINK.LINK_ID)).where(CHAT_LINK.CHAT_ID.eq(chatId))
                 .fetchInto(Link.class);
     }
 
@@ -47,7 +47,7 @@ public class JooqLinkRepository implements LinkRepository {
     public Optional<Link> findById(long id) {
         return dsl.select(LINK.fields())
                 .from(LINK)
-                .where(LINK.ID.eq((int) id))
+                .where(LINK.ID.eq(id))
                 .fetchOptionalInto(Link.class);
     }
 
@@ -72,28 +72,28 @@ public class JooqLinkRepository implements LinkRepository {
                 .set(LINK.URL, link.getUrl())
                 .set(LINK.UPDATE_DATA, JSONB.valueOf(link.getUpdateData()))
                 .set(LINK.UPDATED_AT, link.getUpdatedAt())
-                .where(LINK.ID.eq(link.getId().intValue()))
+                .where(LINK.ID.eq(link.getId()))
                 .returning(LINK.fields())
                 .fetchOptionalInto(Link.class).orElseThrow();
     }
 
     @Override
+    public boolean removeById(long id) {
+        return dsl.deleteFrom(LINK).where(LINK.ID.eq(id)).execute() == 1;
+    }
+
+    @Override
     public boolean addToChat(long chatId, long linkId) {
-        // TODO: add precondition: link doesn't exists in chat
+        // TODO: add precondition: link doesn't exist in chat
         return dsl.insertInto(CHAT_LINK, CHAT_LINK.fields())
                 .values(chatId, linkId)
                 .execute() == 1;
     }
 
     @Override
-    public boolean removeById(long id) {
-        return dsl.deleteFrom(LINK).where(LINK.ID.eq((int) id)).execute() == 1;
-    }
-
-    @Override
     public boolean removeFromChat(long chatId, long linkId) {
         return dsl.deleteFrom(CHAT_LINK)
-                .where(CHAT_LINK.CHAT_ID.eq((int) chatId), CHAT_LINK.LINK_ID.eq((int) linkId))
+                .where(CHAT_LINK.CHAT_ID.eq(chatId), CHAT_LINK.LINK_ID.eq(linkId))
                 .execute() == 1;
     }
 }

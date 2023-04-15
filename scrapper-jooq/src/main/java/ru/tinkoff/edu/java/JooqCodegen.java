@@ -5,8 +5,7 @@ import org.jooq.meta.jaxb.*;
 
 public class JooqCodegen extends IntegrationEnvironment {
     public static void main(String[] args) throws Exception {
-        Database database = new Database()
-                .withName("org.jooq.meta.postgres.PostgresDatabase");
+        Database database = new Database().withName("org.jooq.meta.postgres.PostgresDatabase");
 
         Generate options = new Generate()
                 .withGeneratedAnnotation(true)

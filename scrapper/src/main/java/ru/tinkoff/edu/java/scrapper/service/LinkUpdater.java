@@ -20,11 +20,12 @@ import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
-import ru.tinkoff.edu.java.scrapper.model.GithubUpdateCriteria;
+import ru.tinkoff.edu.java.scrapper.model.GithubUpdateData;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
+import javax.swing.text.html.Option;
 import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -48,11 +50,8 @@ public class LinkUpdater implements Updater {
     @Value("#{@linkUpdateAge}")
     private final Duration updateAge;
 
-
-    // needs decomposing
     @Transactional
     @Override
-    @SneakyThrows
     public void update() {
         ArrayList<Map.Entry<Link, String>> updatedLinks = new ArrayList<>();
 
@@ -62,35 +61,56 @@ public class LinkUpdater implements Updater {
             if (parsingResult.isEmpty()) continue;
 
             switch (parsingResult.get()) {
-                case StackOverflowParsingResponse r -> {
-                    var response = stackOverflowClient.fetchQuestion(r.questionId());
-                    if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
-                        link.setUpdatedAt(response.get().updatedAt());
-                        updatedLinks.add(Map.entry(link, "SOF Link has been updated!"));
-                    }
-                }
-                case GitHubParsingResponse r -> {
-                    var curCommitsNumber = gitHubClient.fetchCommitsNumber(r.user(), r.repo());
-                    if (curCommitsNumber.isEmpty()) continue;
-
-                    var objectMapper = new ObjectMapper();
-                    var githubCriteria = objectMapper.readValue(link.getUpdateData(), GithubUpdateCriteria.class);
-
-                    Integer dbCommitsNumber = githubCriteria.getCommitsNumber();
-
-                    if (dbCommitsNumber == null || !dbCommitsNumber.equals(curCommitsNumber.get())) {
-                        githubCriteria.setCommitsNumber(curCommitsNumber.get());
-                        link.setUpdatedAt(OffsetDateTime.now());
-                        link.setUpdateData(objectMapper.writeValueAsString(githubCriteria));
-                        updatedLinks.add(Map.entry(link, "Detected new commits on repository!"));
-                    }
-                }
+                case StackOverflowParsingResponse r -> processSOFLink(link, r).ifPresent(updatedLinks::add);
+                case GitHubParsingResponse r -> processGitHubLink(link, r).ifPresent(updatedLinks::add);
             }
         }
 
-        updatedLinks.forEach((pair -> linkRepository.save(pair.getKey())));
+        updatedLinks.forEach(pair -> linkRepository.save(pair.getKey()));
         notifyBot(updatedLinks);
     }
+
+    public Optional<Map.Entry<Link, String>> processSOFLink(Link link, StackOverflowParsingResponse response) {
+        var updateDescriptions = new ArrayList<String>();
+
+        // check if something was updated
+        var question = stackOverflowClient.fetchQuestion(response.questionId());
+        if (question.isPresent() && !link.getUpdatedAt().equals(question.get().updatedAt())) {
+            link.setUpdatedAt(question.get().updatedAt());
+            updateDescriptions.add("SOF Link has been updated!");
+        }
+
+        if (updateDescriptions.size() == 0)
+            return Optional.empty();
+
+        return Optional.of(Map.entry(link, String.join("\n", updateDescriptions)));
+    }
+
+    @SneakyThrows
+    public Optional<Map.Entry<Link, String>> processGitHubLink(Link link, GitHubParsingResponse response) {
+        var mapper = new ObjectMapper();
+        var updateData = mapper.readValue(link.getUpdateData(), GithubUpdateData.class);
+        var updateDescriptions = new ArrayList<String>();
+
+        // check on new commits
+        var curCommitsNumber = gitHubClient.fetchCommitsNumber(response.user(), response.repo());
+        if (curCommitsNumber.isPresent()) {
+            Integer dbCommitsNumber = updateData.getCommitsNumber();
+            if (dbCommitsNumber == null || !dbCommitsNumber.equals(curCommitsNumber.get())) {
+                updateData.setCommitsNumber(curCommitsNumber.get());
+                link.setUpdatedAt(OffsetDateTime.now());
+                updateDescriptions.add("Detected new commits on repository!");
+            }
+        }
+
+        if (updateDescriptions.size() == 0) {
+            return Optional.empty();
+        }
+
+        link.setUpdateData(mapper.writeValueAsString(updateData));
+        return Optional.of(Map.entry(link, String.join("\n", updateDescriptions)));
+    }
+
 
     public Optional<ParsingResponse> parseUrl(String url) {
         LinkParser parser = LinkChainParser.chain(new GitHubParser(), new StackOverflowParser());

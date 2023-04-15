@@ -12,7 +12,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
 import util.IntegrationEnvironment;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    LinkRepository linkRepository;
+    JdbcLinkRepository linkRepository;
 
     @Test
     @Transactional

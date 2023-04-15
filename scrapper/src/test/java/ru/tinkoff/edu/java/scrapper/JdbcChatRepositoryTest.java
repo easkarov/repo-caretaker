@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
 import util.IntegrationEnvironment;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    ChatRepository chatRepository;
+    JdbcChatRepository chatRepository;
 
     @Test
     @Transactional

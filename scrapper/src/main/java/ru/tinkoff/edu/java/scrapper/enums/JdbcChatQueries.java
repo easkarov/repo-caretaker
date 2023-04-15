@@ -8,6 +8,10 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public enum JdbcChatQueries {
 
+    SELECT_ALL("""
+            SELECT * FROM chat
+            """),
+
     SELECT_BY_ID("""
             SELECT * FROM chat WHERE id = ?
             """),

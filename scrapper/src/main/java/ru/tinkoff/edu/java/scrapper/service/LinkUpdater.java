@@ -4,6 +4,7 @@ package ru.tinkoff.edu.java.scrapper.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class LinkUpdater {
+public class LinkUpdater implements Updater {
 
     private final JdbcLinkRepository linkRepository;
     private final JdbcChatRepository chatRepository;
@@ -51,7 +52,9 @@ public class LinkUpdater {
 
     // needs decomposing
     @Transactional
-    public void update() throws JsonProcessingException {
+    @Override
+    @SneakyThrows
+    public void update() {
         ArrayList<Map.Entry<Link, String>> updatedLinks = new ArrayList<>();
 
         for (var link : linkRepository.findLongUpdated(updateAge)) {

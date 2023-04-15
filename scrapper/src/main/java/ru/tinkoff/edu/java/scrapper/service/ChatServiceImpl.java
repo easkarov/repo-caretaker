@@ -1,20 +1,20 @@
-package ru.tinkoff.edu.java.scrapper.service.jdbc;
+package ru.tinkoff.edu.java.scrapper.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
-import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.service.ChatService;
 
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class JdbcChatService implements ChatService {
+public class ChatServiceImpl implements ChatService {
 
-    private final JdbcChatRepository chatRepository;
+    private final ChatRepository chatRepository;
 
     @Transactional
     @Override

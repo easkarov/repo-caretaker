@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jooq-postgres-extensions</artifactId>
-            <version>3.18.0</version>
+            <version>3.18.3</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -42,10 +42,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
 </project>

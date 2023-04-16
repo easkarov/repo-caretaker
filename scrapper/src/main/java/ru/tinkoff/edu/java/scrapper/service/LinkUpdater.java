@@ -22,6 +22,7 @@ import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.GithubUpdateData;
 import ru.tinkoff.edu.java.scrapper.model.Link;
+import ru.tinkoff.edu.java.scrapper.model.SOFUpdateData;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
@@ -48,6 +49,8 @@ public class LinkUpdater implements Updater {
     @Value("#{@linkUpdateAge}")
     private final Duration updateAge;
 
+    private final ObjectMapper mapper = new ObjectMapper();
+
     @Transactional
     @Override
     public void update() {
@@ -68,14 +71,20 @@ public class LinkUpdater implements Updater {
         notifyBot(updatedLinks);
     }
 
+    @SneakyThrows
     public Optional<Map.Entry<Link, String>> processSOFLink(Link link, StackOverflowParsingResponse response) {
+        var updateData = mapper.readValue(link.getUpdateData(), SOFUpdateData.class);
         var updateDescriptions = new ArrayList<String>();
 
         // check if question was updated
         var question = stackOverflowClient.fetchQuestion(response.questionId());
-        if (question.isPresent() && !link.getUpdatedAt().equals(question.get().updatedAt())) {
-            link.setUpdatedAt(question.get().updatedAt());
-            updateDescriptions.add("SOF question has been updated!");
+        if (question.isPresent()) {
+            var updatedAt = updateData.getUpdatedAt();
+            if (updatedAt == null || updatedAt.equals(question.get().updatedAt())) {
+                updateData.setUpdatedAt(question.get().updatedAt());
+                link.setUpdatedAt(OffsetDateTime.now());
+                updateDescriptions.add("SOF question has been updated!");
+            }
         }
 
         if (updateDescriptions.size() == 0)
@@ -86,21 +95,24 @@ public class LinkUpdater implements Updater {
 
     @SneakyThrows
     public Optional<Map.Entry<Link, String>> processGitHubLink(Link link, GitHubParsingResponse response) {
-        var mapper = new ObjectMapper();
         var updateData = mapper.readValue(link.getUpdateData(), GithubUpdateData.class);
         var updateDescriptions = new ArrayList<String>();
 
-        // check if repository was updated
+        // check if repository was updated in any case
         var repository = gitHubClient.fetchRepository(response.user(), response.repo());
-        if (repository.isPresent() && !link.getUpdatedAt().equals(repository.get().updatedAt())) {
-            link.setUpdatedAt(repository.get().updatedAt());
-            updateDescriptions.add("Repository has been updated!");
+        if (repository.isPresent()) {
+            var updatedAt = updateData.getUpdatedAt();
+            if (updatedAt == null || !updatedAt.equals(repository.get().updatedAt().toInstant())) {
+                updateData.setUpdatedAt(repository.get().updatedAt().toInstant());
+                link.setUpdatedAt(OffsetDateTime.now());
+                updateDescriptions.add("Repository has been updated!");
+            }
         }
 
         // check on new commits
         var curCommitsNumber = gitHubClient.fetchCommitsNumber(response.user(), response.repo());
         if (curCommitsNumber.isPresent()) {
-            Integer dbCommitsNumber = updateData.getCommitsNumber();
+            var dbCommitsNumber = updateData.getCommitsNumber();
             if (dbCommitsNumber == null || !dbCommitsNumber.equals(curCommitsNumber.get())) {
                 updateData.setCommitsNumber(curCommitsNumber.get());
                 link.setUpdatedAt(OffsetDateTime.now());

@@ -14,7 +14,7 @@ public class NotificationService {
 
     public void notify(LinkUpdate update) {
         for (var id : update.tgChatIds()) {
-            var request = new SendMessage(id, "Link %s has been updated".formatted(update.url()));
+            var request = new SendMessage(id, "Link %s:\n%s".formatted(update.url(), update.description()));
             bot.execute(request);
         }
     }

@@ -43,7 +43,7 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<Link> findLongUpdated(TemporalAmount delta) {
+    public List<Link> findLeastRecentlyUpdated(TemporalAmount delta) {
         return jdbcTemplate.query(JdbcLinkQueries.SELECT_LONG_UPDATED.query(),
                 this::mapRowToLink, OffsetDateTime.now().minus(delta));
     }
@@ -60,6 +60,11 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
+    public boolean removeById(long id) {
+        return jdbcTemplate.update(JdbcLinkQueries.REMOVE_BY_ID.query(), id) >= 1;
+    }
+
+    @Override
     public boolean addToChat(long chatId, long linkId) {
         if (Boolean.TRUE.equals(jdbcTemplate.queryForObject(JdbcLinkQueries.EXISTS_IN_CHAT.query(), boolean.class,
                 chatId, linkId))) {
@@ -67,11 +72,6 @@ public class JdbcLinkRepository implements LinkRepository {
         }
         jdbcTemplate.update(JdbcLinkQueries.ADD_TO_CHAT.query(), chatId, linkId);
         return true;
-    }
-
-    @Override
-    public boolean removeById(long id) {
-        return jdbcTemplate.update(JdbcLinkQueries.REMOVE_BY_ID.query(), id) >= 1;
     }
 
     @Override

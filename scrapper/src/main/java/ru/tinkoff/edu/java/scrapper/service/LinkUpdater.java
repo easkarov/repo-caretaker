@@ -48,7 +48,7 @@ public class LinkUpdater implements Updater {
     public void update() {
         ArrayList<Link> updatedLinks = new ArrayList<>();
 
-        for (var link : linkRepository.findLongUpdated(updateAge)) {
+        for (var link : linkRepository.findLeastRecentlyUpdated(updateAge)) {
             var parsingResult = parseUrl(link.getUrl());
 
             if (parsingResult.isEmpty()) continue;

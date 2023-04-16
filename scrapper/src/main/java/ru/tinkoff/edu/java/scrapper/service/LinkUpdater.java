@@ -55,7 +55,7 @@ public class LinkUpdater implements Updater {
 
             switch (parsingResult.get()) {
                 case StackOverflowParsingResponse r -> {
-                    processStackOverflow(link, r).ifPresent(updatedLinks::add);
+                    processStackOverflowLink(link, r).ifPresent(updatedLinks::add);
                 }
                 case GitHubParsingResponse r -> {
                     processGitHubLink(link, r).ifPresent(updatedLinks::add);
@@ -76,7 +76,7 @@ public class LinkUpdater implements Updater {
         return Optional.empty();
     }
 
-    public Optional<Link> processStackOverflow(Link link, StackOverflowParsingResponse r) {
+    public Optional<Link> processStackOverflowLink(Link link, StackOverflowParsingResponse r) {
         var response = stackOverflowClient.fetchQuestion(r.questionId());
         if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
             link.setUpdatedAt(response.get().updatedAt());

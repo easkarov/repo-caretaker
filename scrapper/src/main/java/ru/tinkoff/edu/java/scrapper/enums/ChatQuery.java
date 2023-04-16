@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
-public enum JdbcChatQueries {
+public enum ChatQuery {
 
     SELECT_BY_ID("""
             SELECT * FROM chat WHERE id = ?
@@ -19,11 +19,19 @@ public enum JdbcChatQueries {
     SELECT_BY_LINK("""
             SELECT chat.* FROM chat JOIN chat_link ON chat.id = chat_id
             WHERE link_id = ?
+            """),
+
+    SELECT_ALL("""
+                SELECT * FROM chat
+            """),
+
+    REMOVE_BY_ID("""
+                DELETE FROM chat WHERE id = ?
             """);
 
     private final String query;
 
-    JdbcChatQueries(String query) {
+    ChatQuery(String query) {
         this.query = query;
     }
 

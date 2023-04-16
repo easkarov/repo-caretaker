@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
-public enum JdbcLinkQueries {
+public enum LinkQuery {
 
     INSERT("""
             INSERT INTO link(url) VALUES(?)
@@ -56,7 +56,7 @@ public enum JdbcLinkQueries {
 
     private final String query;
 
-    JdbcLinkQueries(String query) {
+    LinkQuery(String query) {
         this.query = query;
     }
 

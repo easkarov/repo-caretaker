@@ -20,11 +20,7 @@ public class JdbcChatService implements ChatService {
     @Transactional
     @Override
     public void register(long chatId) {
-        if (chatRepository.findById(chatId).isEmpty()) {
-            log.info("Registering caht...");
-            chatRepository.save(new Chat(chatId));
-        }
-        log.info(String.valueOf(chatId));
+        chatRepository.save(new Chat(chatId));
     }
 
     @Transactional

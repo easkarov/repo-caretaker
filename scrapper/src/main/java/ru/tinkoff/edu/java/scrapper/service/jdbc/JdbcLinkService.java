@@ -3,9 +3,9 @@ package ru.tinkoff.edu.java.scrapper.service.jdbc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.scrapper.exception.DBException;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.JdbcLinkRepository;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class JdbcLinkService implements LinkService {
     @Transactional
     @Override
     public Link untrack(long tgChatId, String url) {
-        Link link = linkRepository.findByUrl(url).orElseThrow(() -> new RuntimeException("link not found"));
+        Link link = linkRepository.findByUrl(url).orElseThrow(() -> new DBException("Link not found"));
         linkRepository.removeFromChat(tgChatId, link.getId());
         return link;
     }

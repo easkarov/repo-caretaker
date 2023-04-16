@@ -55,24 +55,34 @@ public class LinkUpdater implements Updater {
 
             switch (parsingResult.get()) {
                 case StackOverflowParsingResponse r -> {
-                    var response = stackOverflowClient.fetchQuestion(r.questionId());
-                    if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
-                        link.setUpdatedAt(response.get().updatedAt());
-                        updatedLinks.add(link);
-                    }
+                    processStackOverflow(link, r).ifPresent(updatedLinks::add);
                 }
                 case GitHubParsingResponse r -> {
-                    var response = gitHubClient.fetchRepository(r.user(), r.repo());
-                    if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
-                        link.setUpdatedAt(response.get().updatedAt());
-                        updatedLinks.add(link);
-                    }
+                    processGitHubLink(link, r).ifPresent(updatedLinks::add);
                 }
             }
         }
 
         updatedLinks.forEach(linkRepository::save);
         notifyBot(updatedLinks);
+    }
+
+    public Optional<Link> processGitHubLink(Link link, GitHubParsingResponse r) {
+        var response = gitHubClient.fetchRepository(r.user(), r.repo());
+        if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
+            link.setUpdatedAt(response.get().updatedAt());
+            return Optional.of(link);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Link> processStackOverflow(Link link, StackOverflowParsingResponse r) {
+        var response = stackOverflowClient.fetchQuestion(r.questionId());
+        if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
+            link.setUpdatedAt(response.get().updatedAt());
+            return Optional.of(link);
+        }
+        return Optional.empty();
     }
 
     public Optional<ParsingResponse> parseUrl(String url) {

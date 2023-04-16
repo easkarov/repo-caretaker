@@ -25,7 +25,6 @@ import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
-import javax.swing.text.html.Option;
 import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -33,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -55,7 +53,7 @@ public class LinkUpdater implements Updater {
     public void update() {
         ArrayList<Map.Entry<Link, String>> updatedLinks = new ArrayList<>();
 
-        for (var link : linkRepository.findLongUpdated(updateAge)) {
+        for (var link : linkRepository.findLeastRecentlyUpdated(updateAge)) {
             var parsingResult = parseUrl(link.getUrl());
 
             if (parsingResult.isEmpty()) continue;

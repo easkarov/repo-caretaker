@@ -55,7 +55,7 @@ public class JooqLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<Link> findLongUpdated(TemporalAmount delta) {
+    public List<Link> findLeastRecentlyUpdated(TemporalAmount delta) {
         return dsl.selectFrom(LINK)
                 .where(LINK.UPDATED_AT.lessThan(OffsetDateTime.now().minus(delta)))
                 .fetch(this::mapToLink);

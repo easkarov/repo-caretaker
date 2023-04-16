@@ -47,7 +47,7 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<Link> findLongUpdated(TemporalAmount delta) {
+    public List<Link> findLeastRecentlyUpdated(TemporalAmount delta) {
         return jdbcTemplate.query(JdbcLinkQueries.SELECT_LONG_UPDATED.query(),
                 this::mapRowToLink, OffsetDateTime.now().minus(delta));
     }

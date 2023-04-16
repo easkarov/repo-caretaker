@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
-import ru.tinkoff.edu.java.scrapper.service.ChatService;
 
 
 @Service
@@ -20,10 +19,9 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public void register(long chatId) {
         if (chatRepository.findById(chatId).isEmpty()) {
-            log.info("Registering caht...");
             chatRepository.save(new Chat(chatId));
+            log.info("Chat with %s ID was registered".formatted(chatId));
         }
-        log.info(String.valueOf(chatId));
     }
 
     @Transactional

@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
-public enum JdbcChatQueries {
+public enum ChatQuery {
 
     SELECT_ALL("""
             SELECT * FROM chat
@@ -31,7 +31,7 @@ public enum JdbcChatQueries {
 
     private final String query;
 
-    JdbcChatQueries(String query) {
+    ChatQuery(String query) {
         this.query = query;
     }
 

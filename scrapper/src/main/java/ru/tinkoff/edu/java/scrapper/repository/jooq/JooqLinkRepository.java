@@ -5,6 +5,7 @@ import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+import ru.tinkoff.edu.java.scrapper.exception.DBException;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.model.jooq.tables.records.LinkRecord;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
@@ -77,7 +78,7 @@ public class JooqLinkRepository implements LinkRepository {
                 .where(LINK.ID.eq(link.getId()))
                 .returning(LINK.fields())
                 .fetchOptional(this::mapToLink)
-                .orElseThrow();
+                .orElseThrow(() -> new DBException("Failed to update link"));
     }
 
     @Override

@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import ru.tinkoff.edu.java.scrapper.enums.JdbcLinkQueries;
+import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
+import ru.tinkoff.edu.java.scrapper.exception.DBException;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
@@ -25,64 +26,61 @@ public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public List<Link> findAll() {
-        return jdbcTemplate.query(JdbcLinkQueries.SELECT_ALL.query(), this::mapRowToLink);
+        return jdbcTemplate.query(LinkQuery.SELECT_ALL.query(), this::mapRowToLink);
     }
 
 
     @Override
     public List<Link> findAllByChat(long chatId) {
-        return jdbcTemplate.query(JdbcLinkQueries.SELECT_BY_CHAT.query(), this::mapRowToLink, chatId);
+        return jdbcTemplate.query(LinkQuery.SELECT_BY_CHAT.query(), this::mapRowToLink, chatId);
     }
 
     @Override
     public Optional<Link> findByUrl(String url) {
-        Stream<Link> links = jdbcTemplate.queryForStream(JdbcLinkQueries.SELECT_BY_URL.query(), this::mapRowToLink, url);
+        Stream<Link> links = jdbcTemplate.queryForStream(LinkQuery.SELECT_BY_URL.query(), this::mapRowToLink, url);
         return links.findFirst();
     }
 
     @Override
     public Optional<Link> findById(long id) {
-        Stream<Link> links = jdbcTemplate.queryForStream(JdbcLinkQueries.SELECT_BY_ID.query(), this::mapRowToLink, id);
+        Stream<Link> links = jdbcTemplate.queryForStream(LinkQuery.SELECT_BY_ID.query(), this::mapRowToLink, id);
         return links.findFirst();
     }
 
     @Override
     public List<Link> findLeastRecentlyUpdated(TemporalAmount delta) {
-        return jdbcTemplate.query(JdbcLinkQueries.SELECT_LONG_UPDATED.query(),
+        return jdbcTemplate.query(LinkQuery.SELECT_LONG_UPDATED.query(),
                 this::mapRowToLink, OffsetDateTime.now().minus(delta));
     }
 
     @Override
     public Link save(Link link) {
         if (link.getId() == null) {
-            log.info(link.toString());
-            jdbcTemplate.update(JdbcLinkQueries.INSERT.query(), link.getUrl());
-            return findByUrl(link.getUrl()).orElseThrow();
+            jdbcTemplate.update(LinkQuery.INSERT.query(), link.getUrl());
+            return findByUrl(link.getUrl()).orElseThrow(() -> new DBException("Failed to add link"));
         }
 
-        jdbcTemplate.update(JdbcLinkQueries.UPDATE.query(),
+        jdbcTemplate.update(LinkQuery.UPDATE.query(),
                 link.getUrl(), link.getUpdateData(), link.getUpdatedAt(), link.getId());
-        return findById(link.getId()).orElseThrow();
+        return findById(link.getId()).orElseThrow(() -> new DBException("Failed to update link"));
     }
 
     @Override
     public boolean addToChat(long chatId, long linkId) {
-        if (Boolean.TRUE.equals(jdbcTemplate.queryForObject(JdbcLinkQueries.EXISTS_IN_CHAT.query(), boolean.class,
-                chatId, linkId))) {
-            return false;
-        }
-        jdbcTemplate.update(JdbcLinkQueries.ADD_TO_CHAT.query(), chatId, linkId);
+        var number = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(), boolean.class);
+        if (number == null) return false;
+        jdbcTemplate.update(LinkQuery.ADD_TO_CHAT.query(), chatId, linkId);
         return true;
     }
 
     @Override
     public boolean removeById(long id) {
-        return jdbcTemplate.update(JdbcLinkQueries.REMOVE_BY_ID.query(), id) >= 1;
+        return jdbcTemplate.update(LinkQuery.REMOVE_BY_ID.query(), id) >= 1;
     }
 
     @Override
     public boolean removeFromChat(long chatId, long linkId) {
-        return jdbcTemplate.update(JdbcLinkQueries.REMOVE_FROM_CHAT.query(), chatId, linkId) >= 1;
+        return jdbcTemplate.update(LinkQuery.REMOVE_FROM_CHAT.query(), chatId, linkId) >= 1;
     }
 
     private Link mapRowToLink(ResultSet row, int rowNum) throws SQLException {

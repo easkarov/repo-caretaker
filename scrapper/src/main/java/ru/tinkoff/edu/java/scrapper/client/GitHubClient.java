@@ -41,7 +41,7 @@ public class GitHubClient {
 
     }
 
-    public Optional<Integer> fetchCommitsNumber(String owner, String repo) {
+    public Optional<Long> fetchCommitsNumber(String owner, String repo) {
         Pattern pattern = Pattern.compile("next.*page=(?<number>\\d+).*last");
         String uri = String.format(COMMIT_ENDPOINT, owner, repo, 1, 1);
 
@@ -55,7 +55,7 @@ public class GitHubClient {
         return header.map(h -> {
             var matcher = pattern.matcher(header.get());
             matcher.find();
-            return Integer.parseInt(matcher.group("number"));
+            return Long.parseLong(matcher.group("number"));
         });
     }
 }

@@ -49,7 +49,8 @@ public class LinkUpdater implements Updater {
     @Value("#{@linkUpdateAge}")
     private final Duration updateAge;
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
+
 
     @Transactional
     @Override
@@ -98,14 +99,19 @@ public class LinkUpdater implements Updater {
         var updateData = mapper.readValue(link.getUpdateData(), GithubUpdateData.class);
         var updateDescriptions = new ArrayList<String>();
 
-        // check if repository was updated in any case
         var repository = gitHubClient.fetchRepository(response.user(), response.repo());
         if (repository.isPresent()) {
+            // check if repository was updated generally
             var updatedAt = updateData.getUpdatedAt();
-            if (updatedAt == null || !updatedAt.equals(repository.get().updatedAt().toInstant())) {
-                updateData.setUpdatedAt(repository.get().updatedAt().toInstant());
-                link.setUpdatedAt(OffsetDateTime.now());
-                updateDescriptions.add("Repository has been updated!");
+            if (updatedAt == null || !updatedAt.equals(repository.get().updatedAt())) {
+                updateData.setUpdatedAt(repository.get().updatedAt());
+                updateDescriptions.add("* Repository has been updated!");
+            }
+            // check on open issues count
+            var openIssues = updateData.getOpenIssues();
+            if (openIssues == null || !openIssues.equals(repository.get().openIssues())) {
+                updateData.setOpenIssues(repository.get().openIssues());
+                updateDescriptions.add("* Open issues count has been updated!");
             }
         }
 
@@ -115,8 +121,7 @@ public class LinkUpdater implements Updater {
             var dbCommitsNumber = updateData.getCommitsNumber();
             if (dbCommitsNumber == null || !dbCommitsNumber.equals(curCommitsNumber.get())) {
                 updateData.setCommitsNumber(curCommitsNumber.get());
-                link.setUpdatedAt(OffsetDateTime.now());
-                updateDescriptions.add("Detected new commits on repository!");
+                updateDescriptions.add("* Detected new commits on repository!");
             }
         }
 
@@ -124,7 +129,9 @@ public class LinkUpdater implements Updater {
             return Optional.empty();
         }
 
+        link.setUpdatedAt(OffsetDateTime.now());
         link.setUpdateData(mapper.writeValueAsString(updateData));
+
         return Optional.of(Map.entry(link, String.join("\n", updateDescriptions)));
     }
 

@@ -67,8 +67,8 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public boolean addToChat(long chatId, long linkId) {
-        var number = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(), boolean.class);
-        if (number == null) return false;
+        var ifExists = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(), boolean.class);
+        if (ifExists == null || !ifExists) return false;
         jdbcTemplate.update(LinkQuery.ADD_TO_CHAT.query(), chatId, linkId);
         return true;
     }

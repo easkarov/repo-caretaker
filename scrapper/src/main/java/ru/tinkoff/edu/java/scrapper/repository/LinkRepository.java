@@ -8,14 +8,10 @@ import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Optional;
 
-public interface LinkRepository {
-    List<Link> findAll();
+public interface LinkRepository extends BaseRepository<Link> {
     List<Link> findAllByChat(long chatId);
     Optional<Link> findByUrl(String url);
-    Optional<Link> findById(long id);
-    List<Link> findLeastRecentlyUpdated(OffsetDateTime olderThan);
-    Link save(Link link);
-    boolean removeById(long id);
+    List<Link> findLeastRecentlyUpdated(OffsetDateTime oldThan);
     boolean removeFromChat(long chatId, long linkId);
     boolean addToChat(long chatId, long linkId);
 }

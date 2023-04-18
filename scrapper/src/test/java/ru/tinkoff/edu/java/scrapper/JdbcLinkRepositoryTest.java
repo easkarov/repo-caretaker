@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
 import util.IntegrationEnvironment;
 
 import java.time.OffsetDateTime;
@@ -35,7 +36,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    LinkRepository linkRepository;
+    JdbcLinkRepository linkRepository;
 
     @Test
     public void save__linkUrlDoesntExistInDb_addedLink() {

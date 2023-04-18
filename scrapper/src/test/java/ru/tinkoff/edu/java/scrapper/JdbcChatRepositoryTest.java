@@ -18,6 +18,7 @@ import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
 import util.IntegrationEnvironment;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    ChatRepository chatRepository;
+    JdbcChatRepository chatRepository;
 
     @Test
     public void save__ChatDoesntExistInDb_addedChat() {

@@ -3,6 +3,7 @@ package ru.tinkoff.edu.java.scrapper.repository;
 
 import ru.tinkoff.edu.java.scrapper.model.Link;
 
+import java.time.OffsetDateTime;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ public interface LinkRepository {
     List<Link> findAllByChat(long chatId);
     Optional<Link> findByUrl(String url);
     Optional<Link> findById(long id);
-    List<Link> findLeastRecentlyUpdated(TemporalAmount delta);
+    List<Link> findLeastRecentlyUpdated(OffsetDateTime oldThan);
     Link save(Link link);
     boolean removeById(long id);
     boolean removeFromChat(long chatId, long linkId);

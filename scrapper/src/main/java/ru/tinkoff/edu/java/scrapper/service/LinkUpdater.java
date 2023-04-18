@@ -57,7 +57,7 @@ public class LinkUpdater implements Updater {
     public void update() {
         ArrayList<Map.Entry<Link, String>> updatedLinks = new ArrayList<>();
 
-        for (var link : linkRepository.findLeastRecentlyUpdated(updateAge)) {
+        for (var link : linkRepository.findLeastRecentlyUpdated(OffsetDateTime.now().minus(updateAge))) {
             var parsingResult = parseUrl(link.getUrl());
 
             if (parsingResult.isEmpty()) continue;
@@ -84,7 +84,7 @@ public class LinkUpdater implements Updater {
             if (updatedAt == null || updatedAt.equals(question.get().updatedAt())) {
                 updateData.setUpdatedAt(question.get().updatedAt());
                 link.setUpdatedAt(OffsetDateTime.now());
-                updateDescriptions.add("SOF question has been updated!");
+                updateDescriptions.add("* SOF question has been updated!");
             }
         }
 

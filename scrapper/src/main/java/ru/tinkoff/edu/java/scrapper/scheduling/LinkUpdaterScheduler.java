@@ -19,6 +19,6 @@ public class LinkUpdaterScheduler {
     @Scheduled(fixedDelayString = "#{@linkUpdateSchedulerIntervalMs}")
     public void update() throws JsonProcessingException {
         linkUpdater.update();
-        log.info("All old links updated successfully");
+        log.info("Old links updated successfully");
     }
 }

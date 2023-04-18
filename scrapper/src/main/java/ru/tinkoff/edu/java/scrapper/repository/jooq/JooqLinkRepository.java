@@ -56,9 +56,9 @@ public class JooqLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<Link> findLeastRecentlyUpdated(TemporalAmount delta) {
+    public List<Link> findLeastRecentlyUpdated(OffsetDateTime olderThan) {
         return dsl.selectFrom(LINK)
-                .where(LINK.UPDATED_AT.lessThan(OffsetDateTime.now().minus(delta)))
+                .where(LINK.UPDATED_AT.lessThan(olderThan))
                 .fetch(this::mapToLink);
     }
 
@@ -90,8 +90,8 @@ public class JooqLinkRepository implements LinkRepository {
     public boolean addToChat(long chatId, long linkId) {
         var ifExists = dsl.selectFrom(CHAT_LINK)
                 .where(CHAT_LINK.CHAT_ID.eq(chatId), CHAT_LINK.LINK_ID.eq(linkId))
-                .fetchOptional().isEmpty();
-        return ifExists && dsl.insertInto(CHAT_LINK, CHAT_LINK.fields())
+                .fetchOptional().isPresent();
+        return !ifExists && dsl.insertInto(CHAT_LINK, CHAT_LINK.fields())
                 .values(chatId, linkId)
                 .execute() == 1;
     }

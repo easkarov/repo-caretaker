@@ -24,7 +24,7 @@ public class StackOverflowClient {
         return new StackOverflowClient(webClient);
     }
 
-    public Optional<StackOverflowQuestionResponse> fetchQuestion(long questionId) {
+    public Optional<StackOverflowQuestionResponse> fetchQuestion(String questionId) {
         String uri = String.format(GET_QUESTIONS_ENDPOINT, questionId);
 
         return webClient.get()

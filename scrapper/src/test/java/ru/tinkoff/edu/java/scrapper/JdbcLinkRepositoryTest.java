@@ -3,27 +3,32 @@ package ru.tinkoff.edu.java.scrapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 import util.IntegrationEnvironment;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 @Rollback
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
 
     @Autowired
@@ -33,25 +38,22 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     LinkRepository linkRepository;
 
     @Test
-    @Transactional
-    @Sql({"/sql/fill_in_links.sql"})
-    public void save__LinkUrlDoesntExistInDb_addedLink() {
+    public void save__linkUrlDoesntExistInDb_addedLink() {
         // given
         var link = new Link().setUrl("https://meta.com");
 
         // when
-        var addedLink = linkRepository.save(link);
+        var savedLink = linkRepository.save(link);
 
-        // Корректнее ли было бы здесь проверять действительно была добавлена ссылка или нет с помощью jdbcTemplate?
-        // Или достаточно проверять именно контракт метода (то, что он возаращает)?
-
-        assertThat(addedLink.getUrl()).isEqualTo(link.getUrl());
+        // then
+        Link realSavedLink = jdbcTemplate.queryForObject(LinkQuery.SELECT_BY_URL.query(),
+                new BeanPropertyRowMapper<>(Link.class), link.getUrl());
+        assertThat(realSavedLink).isEqualTo(savedLink);
     }
 
     @Test
-    @Transactional
     @Sql({"/sql/fill_in_links.sql"})
-    public void save__LinkUrlAlreadyExistsInDb_throwException() {
+    public void save__linkUrlAlreadyExistsInDb_throwException() {
         // given
         var link = new Link().setUrl("https://stackoverflow.com/7777777");
 
@@ -59,66 +61,147 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
         assertThrows(DataIntegrityViolationException.class, () -> linkRepository.save(link));
     }
 
-    @Test
-    @Transactional
     @Sql("/sql/fill_in_chat_link_pairs.sql")
-    public void removeById__LinkIsBeingTrackedInChat_throwException() {
-        // given
-        var linkId = 2222;
-
-        // when, then
+    @ParameterizedTest
+    @ValueSource(longs = {2222, 2223})
+    public void removeById__LinkIsBeingTrackedInChat_throwException(long linkId) {
         assertThrows(DataIntegrityViolationException.class, () -> linkRepository.removeById(linkId));
     }
 
     @Test
-    @Transactional
     @Sql("/sql/fill_in_links.sql")
-    public void removeById__LinkIsNotBeingTrackedInChat_oneRemovedLink() {
+    public void removeById__LinkIsNotBeingTrackedInChat_removedLink() {
         // given
         var linkId = linkRepository.findAll().get(0).getId();
 
-        // Как тут корректнее тестировать? То, что linkRepository.removeById
-        // возвращает true - удаление прошло успешно (таков контракт метода),
-        // либо же проверять не контракт а смотреть по существу с помощью jdbcTemplate,
-        // произошло ли удаление
+        // when
+        var ifRemoved = linkRepository.removeById(linkId);
 
         // then
-        // 1)
-        assertThat(linkRepository.removeById(linkId)).isTrue();
-
-        // 2)
-        Boolean ifRemoved = jdbcTemplate.queryForObject("SELECT COUNT(*) = 0 FROM link WHERE id = ?",
-                Boolean.class, linkId);
-        assertThat(ifRemoved).isTrue();
+        List<Link> removedLink = jdbcTemplate.query(LinkQuery.SELECT_BY_ID.query(),
+                new BeanPropertyRowMapper<>(Link.class), linkId);
+        assertAll(
+                () -> assertThat(ifRemoved).isTrue(),
+                () -> assertThat(removedLink).hasSize(0)
+        );
     }
 
     @Test
-    @Transactional
-    @Sql("/sql/fill_in_links.sql") // в целом удобно использовать авто SQL скрипты,
-    // но насколько это часто используется в полевых условиях?
-    public void findAll__SomeLinksInDb_listOfLinks() {
-        // given
-        var expectedSize = 3;
-
+    @Sql("/sql/fill_in_links.sql")
+    public void findAll__dbHasSomeLinks_notEmptyLinkList() {
         // when
         List<Link> links = linkRepository.findAll();
 
-        // соответственно, есть ли тут смысл проверять что в List<Link> links лежат действительно те линки,
-        // которые есть в БД или достаточно проверить размер возвращаемого списка ссылок?
-
         // then
-        assertThat(links).hasSize(expectedSize);
-
+        List<Link> realLinks = jdbcTemplate.query(LinkQuery.SELECT_ALL.query(),
+                new BeanPropertyRowMapper<>(Link.class));
+        assertThat(links).hasSameSizeAs(realLinks);
     }
 
     @Test
-    @Transactional
-    public void findAll__NoLinksInDb_emptyList() {
+    public void findAll__dbHasNoLinks_emptyLinkList() {
         // when
         List<Link> links = linkRepository.findAll();
 
         // then
         assertThat(links).isEmpty();
-
     }
+
+    @ParameterizedTest
+    @ValueSource(longs = {1, 2, 3, 4})
+    @Sql("/sql/fill_in_chat_link_pairs.sql")
+    public void findAllByChat__chatHasSomeLinks_correctLinkSizeList(long chatId) {
+        // when
+        List<Link> links = linkRepository.findAllByChat(chatId);
+
+        // then
+        List<Link> realLinks = jdbcTemplate.query(LinkQuery.SELECT_BY_CHAT.query(),
+                new BeanPropertyRowMapper<>(Link.class), chatId);
+
+        assertThat(links).hasSameSizeAs(realLinks);
+    }
+
+    @Test
+    @Sql("/sql/fill_in_chat_link_pairs.sql")
+    public void addToChat__chatAlreadyHasLink_returnFalse() {
+        // given
+        var chatId = 1;
+        var linkId = 2222;
+
+        // when
+        Boolean ifAdded = linkRepository.addToChat(chatId, linkId);
+
+        // then
+        assertThat(ifAdded).isFalse();
+    }
+
+    @Test
+    @Sql("/sql/fill_in_chat_link_pairs.sql")
+    public void addToChat__chatDoesntHaveLink_addedLinkToChat() {
+        // given
+        var chatId = 1;
+        var linkId = 2224;
+
+        // when
+        Boolean ifAdded = linkRepository.addToChat(chatId, linkId);
+
+        // then
+        Boolean existsInChat = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(),
+                Boolean.class, chatId, linkId);
+        assertAll(
+                () -> assertThat(ifAdded).isTrue(),
+                () -> assertThat(existsInChat).isTrue()
+        );
+    }
+
+    @Test
+    @Sql("/sql/fill_in_chat_link_pairs.sql")
+    public void removeFromChat__chatHaveLink_returnTrue() {
+        // given
+        var chatId = 1;
+        var linkId = 2222;
+
+        // when
+        Boolean ifRemoved = linkRepository.removeFromChat(chatId, linkId);
+
+        // then
+        Boolean existsInChat = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(),
+                Boolean.class, chatId, linkId);
+        assertAll(
+                () -> assertThat(ifRemoved).isTrue(),
+                () -> assertThat(existsInChat).isFalse()
+        );
+    }
+
+    @Test
+    @Sql("/sql/fill_in_chat_link_pairs.sql")
+    public void removeFromChat__chatDoesntHaveLink_returnFalse() {
+        // given
+        var chatId = 1;
+        var linkId = 2224;
+
+        // when
+        Boolean ifRemoved = linkRepository.removeFromChat(chatId, linkId);
+
+        // then
+        assertThat(ifRemoved).isFalse();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"2023-01-01T00:00:00Z", "2022-01-01T00:00:00Z"})
+    @Sql("/sql/fill_in_links.sql")
+    public void findLeastRecentlyUpdated__dbHasSomeOldLinks_correctLinkListSize(String dateString) {
+        // given
+        var dateTime = OffsetDateTime.parse(dateString);
+
+        // when
+        List<Link> links = linkRepository.findLeastRecentlyUpdated(dateTime);
+
+        // then
+        List<Link> realLinks = jdbcTemplate.query(LinkQuery.SELECT_LEAST_RECENTLY_UPDATED.query(),
+                new BeanPropertyRowMapper<>(Link.class), dateTime);
+
+        assertThat(links).hasSameSizeAs(realLinks);
+    }
+
 }

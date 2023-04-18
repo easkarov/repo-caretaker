@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.repository;
+package ru.tinkoff.edu.java.scrapper.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -6,11 +6,11 @@ import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.exception.DBException;
 import ru.tinkoff.edu.java.scrapper.model.Link;
+import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -44,9 +44,9 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<Link> findLeastRecentlyUpdated(TemporalAmount delta) {
-        return jdbcTemplate.query(LinkQuery.SELECT_LONG_UPDATED.query(),
-                this::mapRowToLink, OffsetDateTime.now().minus(delta));
+    public List<Link> findLeastRecentlyUpdated(OffsetDateTime olderThan) {
+        return jdbcTemplate.query(LinkQuery.SELECT_LEAST_RECENTLY_UPDATED.query(),
+                this::mapRowToLink, olderThan);
     }
 
     @Override
@@ -67,8 +67,8 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public boolean addToChat(long chatId, long linkId) {
-        var ifExists = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(), boolean.class);
-        if (ifExists == null || !ifExists) return false;
+        var ifExists = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(), boolean.class, chatId, linkId);
+        if (ifExists == null || ifExists) return false;
         jdbcTemplate.update(LinkQuery.ADD_TO_CHAT.query(), chatId, linkId);
         return true;
     }

@@ -15,7 +15,7 @@ public class StackOverflowParser extends LinkChainParser {
         var matcher = pattern.matcher(text.trim());
         if (matcher.find()) {
             String questionId = matcher.group(1);
-            return Optional.of(new StackOverflowParsingResponse(Integer.parseInt(questionId)));
+            return Optional.of(new StackOverflowParsingResponse(questionId));
         }
         return parseNext(text);
     }

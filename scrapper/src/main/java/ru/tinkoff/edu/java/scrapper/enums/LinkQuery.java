@@ -50,7 +50,7 @@ public enum LinkQuery {
             INSERT INTO chat_link VALUES(?, ?)
             """),
 
-    SELECT_LONG_UPDATED("""
+    SELECT_LEAST_RECENTLY_UPDATED("""
                     SELECT * FROM link WHERE updated_at < ?
             """);
 

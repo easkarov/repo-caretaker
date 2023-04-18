@@ -24,6 +24,7 @@ import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
 import java.net.URI;
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +49,7 @@ public class LinkUpdater implements Updater {
     public void update() {
         ArrayList<Link> updatedLinks = new ArrayList<>();
 
-        for (var link : linkRepository.findLeastRecentlyUpdated(updateAge)) {
+        for (var link : linkRepository.findLeastRecentlyUpdated(OffsetDateTime.now().minus(updateAge))) {
             var parsingResult = parseUrl(link.getUrl());
 
             if (parsingResult.isEmpty()) continue;
@@ -68,18 +69,18 @@ public class LinkUpdater implements Updater {
     }
 
     public Optional<Link> processGitHubLink(Link link, GitHubParsingResponse r) {
-        var response = gitHubClient.fetchRepository(r.user(), r.repo());
-        if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
-            link.setUpdatedAt(response.get().updatedAt());
+        var repository = gitHubClient.fetchRepository(r.user(), r.repo());
+        if (repository.isPresent() && !link.getUpdatedAt().equals(repository.get().updatedAt())) {
+            link.setUpdatedAt(repository.get().updatedAt());
             return Optional.of(link);
         }
         return Optional.empty();
     }
 
     public Optional<Link> processStackOverflowLink(Link link, StackOverflowParsingResponse r) {
-        var response = stackOverflowClient.fetchQuestion(r.questionId());
-        if (response.isPresent() && !link.getUpdatedAt().equals(response.get().updatedAt())) {
-            link.setUpdatedAt(response.get().updatedAt());
+        var question = stackOverflowClient.fetchQuestion(r.questionId());
+        if (question.isPresent() && !link.getUpdatedAt().equals(question.get().updatedAt())) {
+            link.setUpdatedAt(question.get().updatedAt());
             return Optional.of(link);
         }
         return Optional.empty();

@@ -8,6 +8,8 @@ import liquibase.database.core.PostgresDatabase;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.DirectoryResourceAccessor;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -34,7 +36,6 @@ public abstract class IntegrationEnvironment {
 
     private static void runMigrations() {
         try (var conn = DB_CONTAINER.createConnection("")) {
-
             var changeLogDir = new DirectoryResourceAccessor(CHANGELOG_PATH);
 
             var db = new PostgresDatabase();
@@ -42,10 +43,15 @@ public abstract class IntegrationEnvironment {
 
             var liquibase = new Liquibase("master.xml", changeLogDir, db);
             liquibase.update(new Contexts(), new LabelExpression());
-
-        }
-        catch (SQLException | LiquibaseException | FileNotFoundException exception) {
+        } catch (SQLException | LiquibaseException | FileNotFoundException exception) {
             throw new RuntimeException(exception);
         }
-     }
+    }
+
+    @DynamicPropertySource
+    static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", DB_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.username", DB_CONTAINER::getUsername);
+        registry.add("spring.datasource.password", DB_CONTAINER::getPassword);
+    }
 }

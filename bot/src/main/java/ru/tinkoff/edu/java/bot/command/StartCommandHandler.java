@@ -9,12 +9,14 @@ import org.springframework.stereotype.Component;
 import ru.tinkoff.edu.java.bot.enums.Command;
 import ru.tinkoff.edu.java.bot.MessageSender;
 import ru.tinkoff.edu.java.bot.enums.State;
+import ru.tinkoff.edu.java.bot.service.ChatService;
 
 
 @Component
 @RequiredArgsConstructor
 public class StartCommandHandler implements CommandHandler<SendMessage, SendResponse> {
     private final MessageSender messageSender;
+    private final ChatService chatService;
     @Override
     public Command command() {
         return Command.START;
@@ -27,6 +29,7 @@ public class StartCommandHandler implements CommandHandler<SendMessage, SendResp
 
     @Override
     public SendMessage handle(Update update) {
+        chatService.registerChat(update.message().chat().id());
         return messageSender.send(update, "Welcome!", true);
     }
 }

@@ -6,5 +6,6 @@ import java.time.OffsetDateTime;
 
 public record GitHubRepositoryResponse(
         @JsonProperty("updated_at") OffsetDateTime updatedAt,
-        @JsonProperty("full_name") String fullName) {
+        @JsonProperty("full_name") String fullName,
+        @JsonProperty("open_issues_count") Long openIssues) {
 }

@@ -1,16 +1,34 @@
 package ru.tinkoff.edu.java.scrapper.configuration;
 
-import jakarta.validation.constraints.NotNull;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.validation.annotation.Validated;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
-@Validated
-@ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
-public record ApplicationConfig(
-        @NotNull String test,
-        @NotNull Scheduler scheduler
-) {
-    record Scheduler(Duration interval) {}
+@Configuration
+@RequiredArgsConstructor
+public class ApplicationConfig {
+    private final ApplicationProperties applicationProperties;
+
+    @Bean
+    public Duration linkUpdateAge() {
+        return applicationProperties.linkUpdateAge();
+    }
+
+    @Bean
+    public long linkUpdateSchedulerIntervalMs() {
+        return applicationProperties.scheduler().interval().toMillis();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        var objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
 }

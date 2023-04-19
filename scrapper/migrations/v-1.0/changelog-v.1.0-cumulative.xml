@@ -8,4 +8,5 @@
        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <include file="05-04-2023--01-initial-schema.sql" relativeToChangelogFile="true"/>
+    <include file="15-04-2023--02-link-update-data.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

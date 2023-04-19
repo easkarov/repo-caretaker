@@ -4,6 +4,7 @@ package ru.tinkoff.edu.java.scrapper.configuration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import ru.tinkoff.edu.java.scrapper.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 
@@ -25,7 +26,8 @@ public class ClientConfiguration {
     }
 
     @Bean
-    public long linkUpdateSchedulerIntervalMs(ApplicationConfig config) {
-        return config.scheduler().interval().toMillis();
+    public BotClient botClient() {
+        return BotClient.create();
     }
+
 }

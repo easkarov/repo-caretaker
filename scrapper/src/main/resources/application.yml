@@ -1,7 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/scrapper
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+
+  liquibase:
+    enabled: false
+
 app:
-  test: 777
   scheduler:
-    interval: 2000
+    interval: 15S
+  link-update-age: 15S
 
 server:
   port: 8080

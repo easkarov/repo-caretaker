@@ -10,6 +10,9 @@ import ru.tinkoff.edu.java.bot.dto.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.bot.dto.response.LinkResponse;
 import ru.tinkoff.edu.java.bot.dto.response.ListLinkResponse;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 
 @RequiredArgsConstructor
 public class ScrapperClient {
@@ -23,35 +26,38 @@ public class ScrapperClient {
         this.webClient = WebClient.create(baseUrl);
     }
 
-    public LinkResponse trackLink(String link, long chatId) {
+    public Optional<LinkResponse> trackLink(String url, long chatId) {
         return webClient
                 .post()
                 .uri(LINK_ENDPOINT)
                 .header(TG_CHAT_HEADER, String.valueOf(chatId))
-                .body(BodyInserters.fromValue(new AddLinkRequest(link)))
+                .body(BodyInserters.fromValue(new AddLinkRequest(url)))
                 .retrieve()
                 .bodyToMono(LinkResponse.class)
-                .block();
+                .onErrorResume(exception -> Mono.empty())
+                .blockOptional();
     }
 
-    public LinkResponse untrackLink(String link, long chatId) {
+    public Optional<LinkResponse> untrackLink(String url, long chatId) {
         return webClient
                 .method(HttpMethod.DELETE)
                 .uri(LINK_ENDPOINT)
                 .header(TG_CHAT_HEADER, String.valueOf(chatId))
-                .body(BodyInserters.fromValue(new RemoveLinkRequest(link)))
+                .body(BodyInserters.fromValue(new RemoveLinkRequest(url)))
                 .retrieve()
                 .bodyToMono(LinkResponse.class)
-                .block();
+                .onErrorResume(exception -> Mono.empty())
+                .blockOptional();
     }
 
-    public ListLinkResponse getLinks(long chatId) {
+    public ListLinkResponse getAllLinks(long chatId) {
         return webClient
                 .get()
                 .uri(LINK_ENDPOINT)
                 .header(TG_CHAT_HEADER, String.valueOf(chatId))
                 .retrieve()
                 .bodyToMono(ListLinkResponse.class)
+                .onErrorResume(exception -> Mono.empty())
                 .block();
     }
 
@@ -63,7 +69,7 @@ public class ScrapperClient {
                 .block());
     }
 
-    public boolean removeChat(long chatId) {
+    public boolean unregisterChat(long chatId) {
         return Boolean.TRUE.equals(webClient
                 .delete()
                 .uri(TG_CHAT_ENDPOINT.formatted(chatId))

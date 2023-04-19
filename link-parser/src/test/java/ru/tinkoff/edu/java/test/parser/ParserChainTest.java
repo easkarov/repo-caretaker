@@ -6,9 +6,9 @@ import ru.tinkoff.edu.java.parser.GitHubParser;
 import ru.tinkoff.edu.java.parser.LinkChainParser;
 import ru.tinkoff.edu.java.parser.LinkParser;
 import ru.tinkoff.edu.java.parser.StackOverflowParser;
-import ru.tinkoff.edu.java.parser.response.BaseResponse;
-import ru.tinkoff.edu.java.parser.response.GitHubResponse;
-import ru.tinkoff.edu.java.parser.response.StackOverflowResponse;
+import ru.tinkoff.edu.java.parser.response.ParsingResponse;
+import ru.tinkoff.edu.java.parser.response.GitHubParsingResponse;
+import ru.tinkoff.edu.java.parser.response.StackOverflowParsingResponse;
 
 import java.util.Optional;
 
@@ -25,13 +25,13 @@ public class ParserChainTest {
         // given
 
         // when
-        Optional<BaseResponse> response = linkParser.parse(url);
+        Optional<ParsingResponse> response = linkParser.parse(url);
 
         // then
         assertThat(response).isNotEmpty();
-        assertThat(response.get()).isInstanceOf(GitHubResponse.class);
+        assertThat(response.get()).isInstanceOf(GitHubParsingResponse.class);
 
-        var githubResponse = (GitHubResponse) response.get();
+        var githubResponse = (GitHubParsingResponse) response.get();
         assertAll("Validate user and repo in response",
                 () -> assertThat(githubResponse.user()).isEqualTo(expectedUser),
                 () -> assertThat(githubResponse.repo()).isEqualTo(expectedRepo));
@@ -44,13 +44,13 @@ public class ParserChainTest {
         // given
 
         // when
-        Optional<BaseResponse> response = linkParser.parse(url);
+        Optional<ParsingResponse> response = linkParser.parse(url);
 
         // then
         assertThat(response).isNotEmpty();
-        assertThat(response.get()).isInstanceOf(StackOverflowResponse.class);
+        assertThat(response.get()).isInstanceOf(StackOverflowParsingResponse.class);
 
-        var sofResponse = (StackOverflowResponse) response.get();
+        var sofResponse = (StackOverflowParsingResponse) response.get();
         assertAll("Validate question id in response",
                 () -> assertThat(sofResponse.questionId()).isEqualTo(expectedQuestionId),
                 () -> assertThat(sofResponse.questionId()).isEqualTo(expectedQuestionId));
@@ -62,7 +62,7 @@ public class ParserChainTest {
         // given
 
         // when
-        Optional<BaseResponse> response = linkParser.parse(url);
+        Optional<ParsingResponse> response = linkParser.parse(url);
 
         // then
         assertThat(response).isEmpty();

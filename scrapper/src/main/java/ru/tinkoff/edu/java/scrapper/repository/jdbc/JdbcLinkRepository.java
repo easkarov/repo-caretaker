@@ -57,11 +57,13 @@ public class JdbcLinkRepository implements LinkRepository {
     public Link save(Link link) {
         if (link.getId() == null) {
             jdbcTemplate.update(LinkQuery.INSERT.query(), link.getUrl());
+            // TODO: handle exceptions
             return findByUrl(link.getUrl()).orElseThrow(() -> new DBException("Failed to add link"));
         }
 
         jdbcTemplate.update(LinkQuery.UPDATE.query(),
                 link.getUrl(), link.getUpdateData(), link.getUpdatedAt(), link.getId());
+        // TODO: handle exceptions
         return findById(link.getId()).orElseThrow(() -> new DBException("Failed to update link"));
     }
 

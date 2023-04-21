@@ -14,8 +14,6 @@ import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.Chat.CHAT;
 import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.ChatLink.CHAT_LINK;
 
 
-@Primary
-@Repository
 @RequiredArgsConstructor
 public class JooqChatRepository implements ChatRepository {
     private final DSLContext dsl;

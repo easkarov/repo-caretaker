@@ -36,7 +36,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    JdbcLinkRepository linkRepository;
+    LinkRepository linkRepository;
 
     @Test
     public void save__linkUrlDoesntExistInDb_addedLink() {

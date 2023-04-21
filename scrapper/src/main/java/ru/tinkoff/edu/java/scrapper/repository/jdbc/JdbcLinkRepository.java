@@ -19,8 +19,6 @@ import java.util.stream.Stream;
 
 
 @Slf4j
-//@Primary
-@Repository
 @RequiredArgsConstructor
 public class JdbcLinkRepository implements LinkRepository {
     private final JdbcTemplate jdbcTemplate;

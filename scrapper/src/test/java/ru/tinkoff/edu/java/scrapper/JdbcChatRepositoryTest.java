@@ -14,11 +14,8 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.ChatQuery;
-import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
-import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
-import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
 import util.IntegrationEnvironment;
 
 import java.util.List;
@@ -37,12 +34,12 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    JdbcChatRepository chatRepository;
+    ChatRepository chatRepository;
 
     @Test
     public void save__ChatDoesntExistInDb_addedChat() {
         // given
-        var chat = new Chat(444L);
+        var chat = new Chat().setId(444L);
 
         // when
         var savedChat = chatRepository.save(chat);
@@ -62,7 +59,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @Sql("/sql/fill_in_chats.sql")
     public void save__ChatAlreadyExistsInDb_throwException() {
         // given
-        var chat = new Chat(1L);
+        var chat = new Chat().setId(1L);
 
         // when, then
         assertThrows(DataIntegrityViolationException.class, () -> chatRepository.save(chat));

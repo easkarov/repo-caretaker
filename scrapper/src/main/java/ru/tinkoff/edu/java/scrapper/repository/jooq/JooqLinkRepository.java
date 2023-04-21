@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.exception.DBException;
 import ru.tinkoff.edu.java.scrapper.model.Link;
@@ -19,8 +20,6 @@ import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.ChatLink.CHAT_LINK;
 import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.Link.LINK;
 
 
-@Primary
-@Repository
 @RequiredArgsConstructor
 public class JooqLinkRepository implements LinkRepository {
     private final DSLContext dsl;

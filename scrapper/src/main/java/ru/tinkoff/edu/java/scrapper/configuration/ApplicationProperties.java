@@ -10,7 +10,12 @@ import java.time.Duration;
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationProperties(
         @NotNull Scheduler scheduler,
-        @NotNull Duration linkUpdateAge
+        @NotNull Duration linkUpdateAge,
+        @NotNull AccessType databaseAccessType
 ) {
     record Scheduler(Duration interval) {}
+
+    enum AccessType {
+        JDBC, JPA, JOOQ
+    }
 }

@@ -12,6 +12,7 @@ app:
   scheduler:
     interval: 15S
   link-update-age: 15S
+  database-access-type: jdbc
 
 server:
   port: 8080
@@ -20,7 +21,6 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui
-
 
 github-client:
   base-url: https://api.github.com

@@ -72,6 +72,10 @@
             <artifactId>jooq-postgres-extensions</artifactId>
             <version>3.18.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

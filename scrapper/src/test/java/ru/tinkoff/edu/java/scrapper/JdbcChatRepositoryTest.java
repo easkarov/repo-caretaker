@@ -15,6 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.ChatQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
+import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import util.IntegrationEnvironment;
 
@@ -118,7 +119,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @ValueSource(longs = {2222, 2224, 2223})
     public void findAllByLink__chatHasSomeTrackedLinks_correctChatListSize(long linkId) {
         // when
-        List<Chat> chats = chatRepository.findAllByLink(linkId);
+        List<Chat> chats = chatRepository.findAllByLink(new Link().setId(linkId));
         // then
         List<Chat> realChats = jdbcTemplate.query(ChatQuery.SELECT_BY_LINK.query(),
                 new BeanPropertyRowMapper<>(Chat.class), linkId);

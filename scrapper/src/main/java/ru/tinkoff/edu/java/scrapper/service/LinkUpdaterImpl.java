@@ -70,6 +70,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
             }
         }
 
+        log.info(updatedLinks.toString());
         updatedLinks.forEach(pair -> linkRepository.save(pair.getKey()));
         notifyBot(updatedLinks);
     }
@@ -151,7 +152,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
     public void notifyBot(List<Entry<Link, String>> linkPairs) {
         for (var pair : linkPairs) {
             var link = pair.getKey();
-            List<Chat> linkChats = chatRepository.findAllByLink(link.getId());
+            List<Chat> linkChats = chatRepository.findAllByLink(link);
             LinkUpdate update = LinkUpdate.builder()
                     .id(link.getId())
                     .description(pair.getValue())

@@ -1,36 +1,37 @@
 package ru.tinkoff.edu.java.scrapper.configuration.database;
 
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
-import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
-import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaLinkRepository;
 import ru.tinkoff.edu.java.scrapper.service.ChatService;
 import ru.tinkoff.edu.java.scrapper.service.ChatServiceImpl;
 import ru.tinkoff.edu.java.scrapper.service.LinkService;
 import ru.tinkoff.edu.java.scrapper.service.LinkServiceImpl;
 
 @Configuration
-@ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jdbc")
+@ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jpa")
 @RequiredArgsConstructor
-public class JdbcAccessConfiguration {
+public class JpaAccessConfiguration {
 
-    private final JdbcTemplate jdbcTemplate;
+    @PersistenceContext
+    private final EntityManager entityManager;
 
     @Bean
     public LinkRepository linkRepository() {
-        return new JdbcLinkRepository(jdbcTemplate);
+        return new JpaLinkRepository(entityManager);
     }
 
     @Bean
     public ChatRepository chatRepository() {
-        return new JdbcChatRepository(jdbcTemplate);
+        return new JpaChatRepository(entityManager);
     }
 
     @Bean

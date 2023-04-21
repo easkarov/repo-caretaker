@@ -2,11 +2,11 @@ package ru.tinkoff.edu.java.scrapper.repository.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.exception.DBException;
+import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 
@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 
+//@Repository
 @Slf4j
 @RequiredArgsConstructor
 public class JdbcLinkRepository implements LinkRepository {
@@ -29,8 +30,8 @@ public class JdbcLinkRepository implements LinkRepository {
 
 
     @Override
-    public List<Link> findAllByChat(long chatId) {
-        return jdbcTemplate.query(LinkQuery.SELECT_BY_CHAT.query(), this::mapRowToLink, chatId);
+    public List<Link> findAllByChat(Chat chat) {
+        return jdbcTemplate.query(LinkQuery.SELECT_BY_CHAT.query(), this::mapRowToLink, chat.getId());
     }
 
     @Override
@@ -66,10 +67,10 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public boolean addToChat(long chatId, long linkId) {
-        var ifExists = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(), boolean.class, chatId, linkId);
+    public boolean addToChat(Chat chat, Link link) {
+        var ifExists = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(), boolean.class, chat, link);
         if (ifExists == null || ifExists) return false;
-        jdbcTemplate.update(LinkQuery.ADD_TO_CHAT.query(), chatId, linkId);
+        jdbcTemplate.update(LinkQuery.ADD_TO_CHAT.query(), chat.getId(), link.getId());
         return true;
     }
 
@@ -79,8 +80,8 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public boolean removeFromChat(long chatId, long linkId) {
-        return jdbcTemplate.update(LinkQuery.REMOVE_FROM_CHAT.query(), chatId, linkId) >= 1;
+    public boolean removeFromChat(Chat chat, Link link) {
+        return jdbcTemplate.update(LinkQuery.REMOVE_FROM_CHAT.query(), chat, link) >= 1;
     }
 
     private Link mapRowToLink(ResultSet row, int rowNum) throws SQLException {

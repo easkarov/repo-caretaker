@@ -25,6 +25,7 @@ public class GitHubClient {
                 .defaultHeader("X-GitHub-Api-Version", config.apiVersion())
                 .defaultHeader("Authorization", "Bearer %s".formatted(config.apiKey()))
                 .build();
+        log.info(config.apiKey());
         return new GitHubClient(webClient);
 
     }
@@ -51,7 +52,6 @@ public class GitHubClient {
                 .exchangeToMono(response -> Mono.just(response.headers().header("link").get(0)))
                 .onErrorResume(exception -> Mono.empty())
                 .blockOptional();
-
         return header.map(h -> {
             var matcher = pattern.matcher(header.get());
             matcher.find();

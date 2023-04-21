@@ -19,7 +19,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public void register(long chatId) {
         if (chatRepository.findById(chatId).isEmpty()) {
-            chatRepository.save(new Chat(chatId));
+            chatRepository.save(new Chat().setId(chatId));
             log.info("Chat with %s ID was registered".formatted(chatId));
         }
     }

@@ -17,9 +17,11 @@ import ru.tinkoff.edu.java.scrapper.configuration.client.StackOverflowConfigurat
         StackOverflowConfiguration.class}
 )
 public class ScrapperApplication {
+
     public static void main(String[] args) {
         var ctx = SpringApplication.run(ScrapperApplication.class, args);
         ApplicationProperties config = ctx.getBean(ApplicationProperties.class);
+
         System.out.println(config);
     }
 }

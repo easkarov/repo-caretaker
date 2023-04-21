@@ -34,7 +34,7 @@ public class JooqAccessConfiguration {
 
     @Bean
     public LinkService linkService() {
-        return new LinkServiceImpl(linkRepository());
+        return new LinkServiceImpl(linkRepository(), chatRepository());
     }
 
     @Bean

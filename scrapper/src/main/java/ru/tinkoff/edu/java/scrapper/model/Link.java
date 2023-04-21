@@ -1,19 +1,24 @@
 package ru.tinkoff.edu.java.scrapper.model;
 
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeId;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Type;
 
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
 @Table(name = "link")
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 public class Link {
 
@@ -25,9 +30,19 @@ public class Link {
 
     private OffsetDateTime updatedAt;
 
+    @Column(columnDefinition = "jsonb")
+    @Type(JsonType.class)
     private String updateData;
 
-    @ManyToMany
-    private List<Chat> chats;
+    @ManyToMany(mappedBy = "links", fetch = FetchType.LAZY)
+    private Set<Chat> chats;
+
+    public boolean removeFromChat(Chat chat) {
+        return this.getChats().remove(chat) && chat.getLinks().remove(this);
+    }
+
+    public boolean addToChat(Chat chat) {
+        return this.getChats().add(chat) && chat.getLinks().add(this);
+    }
 
 }

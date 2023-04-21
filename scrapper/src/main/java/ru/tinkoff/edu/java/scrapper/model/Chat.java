@@ -1,25 +1,31 @@
 package ru.tinkoff.edu.java.scrapper.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "chat")
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 public class Chat {
 
     @Id
-    private long id;
+    private Long id;
 
-    @ManyToMany(mappedBy = "chats")
-    private List<Link> links;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "chat_link",
+            joinColumns = @JoinColumn(name = "chat_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "link_id", referencedColumnName = "id")
+    )
+    private Set<Link> links;
 
 }

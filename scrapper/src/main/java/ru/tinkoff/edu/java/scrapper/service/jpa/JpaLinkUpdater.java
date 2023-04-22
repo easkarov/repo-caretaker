@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.parser.GitHubParser;
@@ -36,9 +37,10 @@ import java.util.Optional;
 
 import static java.util.Map.Entry;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jpa")
 public class JpaLinkUpdater implements LinkUpdater {
 
     private final JpaLinkRepository linkRepository;

@@ -15,9 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqLinkRepository;
 import util.JooqIntegrationEnvironment;
-import util.JpaIntegrationEnvironment;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -35,7 +34,7 @@ public class JooqLinkRepositoryTest extends JooqIntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    LinkRepository linkRepository;
+    JooqLinkRepository linkRepository;
 
     @Test
     public void save__linkUrlDoesntExistInDb_addedLink() {

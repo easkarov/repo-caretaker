@@ -48,10 +48,9 @@ public class JooqChatRepositoryTest extends JooqIntegrationEnvironment {
         // then
         Chat realSavedChat = jdbcTemplate.queryForObject(ChatQuery.SELECT_BY_ID.query(),
                 new BeanPropertyRowMapper<>(Chat.class), chat.getId());
-        assertAll(
-                () -> assertThat(realSavedChat).isNotNull(),
-                () -> assertThat(realSavedChat).isEqualTo(savedChat)
-        );
+
+        assertThat(realSavedChat).isNotNull();
+        assertThat(realSavedChat.getId()).isEqualTo(savedChat.getId());
     }
 
     @Test

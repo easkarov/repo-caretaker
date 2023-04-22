@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tinkoff.edu.java.scrapper.exception.DBException;
 import ru.tinkoff.edu.java.scrapper.exception.NotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
@@ -15,7 +14,7 @@ import java.util.List;
 
 
 @Slf4j
-//@Service
+@Service
 @RequiredArgsConstructor
 public class LinkServiceImpl implements LinkService {
 
@@ -44,8 +43,6 @@ public class LinkServiceImpl implements LinkService {
     @Override
     public List<Link> listAll(long tgChatId) {
         var chat = chatRepository.findById(tgChatId).orElseThrow(() -> new NotFoundException("Chat not found"));
-        int a = 1;
-//        return linkRepository.findAll();
         return linkRepository.findAllByChat(chat);
     }
 }

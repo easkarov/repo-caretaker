@@ -20,12 +20,12 @@ public class Chat {
     @Id
     private Long id;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "chat_link",
-            joinColumns = @JoinColumn(name = "chat_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "link_id", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "chat_id"),
+            inverseJoinColumns = @JoinColumn(name = "link_id")
     )
-    private Set<Link> links;
+    private Set<Link> links = new HashSet<>();
 
 }

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-//@Repository
 @RequiredArgsConstructor
 @Slf4j
 public class JpaLinkRepository implements LinkRepository {

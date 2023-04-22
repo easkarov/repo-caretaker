@@ -11,10 +11,6 @@ import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaLinkRepository;
-import ru.tinkoff.edu.java.scrapper.service.ChatService;
-import ru.tinkoff.edu.java.scrapper.service.ChatServiceImpl;
-import ru.tinkoff.edu.java.scrapper.service.LinkService;
-import ru.tinkoff.edu.java.scrapper.service.LinkServiceImpl;
 
 @Configuration
 @ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jpa")
@@ -32,15 +28,5 @@ public class JpaAccessConfiguration {
     @Bean
     public ChatRepository chatRepository() {
         return new JpaChatRepository(entityManager);
-    }
-
-    @Bean
-    public LinkService linkService() {
-        return new LinkServiceImpl(linkRepository(), chatRepository());
-    }
-
-    @Bean
-    public ChatService chatService() {
-        return new ChatServiceImpl(chatRepository());
     }
 }

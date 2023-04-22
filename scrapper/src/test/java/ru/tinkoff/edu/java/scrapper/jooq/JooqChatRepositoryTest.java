@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.ChatQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqChatRepository;
 import util.JooqIntegrationEnvironment;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class JooqChatRepositoryTest extends JooqIntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    ChatRepository chatRepository;
+    JooqChatRepository chatRepository;
 
     @Test
     public void save__ChatDoesntExistInDb_addedChat() {

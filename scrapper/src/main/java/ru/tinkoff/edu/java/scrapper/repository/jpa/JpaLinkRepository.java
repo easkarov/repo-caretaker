@@ -4,8 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
@@ -19,6 +17,18 @@ import java.util.Optional;
 @Slf4j
 public class JpaLinkRepository implements LinkRepository {
 
+    private final static String SELECT_ALL = """
+            SELECT l from Link l
+            """;
+
+    private final static String SELECT_BY_URL = """
+            SELECT l from Link l WHERE url = :url
+            """;
+
+    private final static String SELECT_LEAST_RECENTLY_UPDATED = """
+            SELECT l from Link l WHERE updatedAt < :date
+            """;
+
     @PersistenceContext
     private final EntityManager entityManager;
 
@@ -29,7 +39,7 @@ public class JpaLinkRepository implements LinkRepository {
 
     @Override
     public List<Link> findAll() {
-        return entityManager.createQuery("SELECT l from Link l", Link.class).getResultList();
+        return entityManager.createQuery(SELECT_ALL, Link.class).getResultList();
     }
 
     @Override
@@ -57,14 +67,14 @@ public class JpaLinkRepository implements LinkRepository {
 
     @Override
     public Optional<Link> findByUrl(String url) {
-        var query = entityManager.createQuery("SELECT l from Link l WHERE url = :url", Link.class);
+        var query = entityManager.createQuery(SELECT_BY_URL, Link.class);
         query.setParameter("url", url);
         return query.getResultStream().findAny();
     }
 
     @Override
     public List<Link> findLeastRecentlyUpdated(OffsetDateTime oldThanDateTime) {
-        var query = entityManager.createQuery("SELECT l from Link l WHERE updatedAt < :date", Link.class);
+        var query = entityManager.createQuery(SELECT_LEAST_RECENTLY_UPDATED, Link.class);
         query.setParameter("date", oldThanDateTime);
         return query.getResultList();
     }

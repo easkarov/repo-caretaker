@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaLinkRepository;
 
@@ -21,12 +19,12 @@ public class JpaAccessConfiguration {
     private final EntityManager entityManager;
 
     @Bean
-    public LinkRepository linkRepository() {
+    public JpaLinkRepository linkRepository() {
         return new JpaLinkRepository(entityManager);
     }
 
     @Bean
-    public ChatRepository chatRepository() {
+    public JpaChatRepository chatRepository() {
         return new JpaChatRepository(entityManager);
     }
 }

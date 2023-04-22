@@ -15,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.ChatQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaChatRepository;
-import util.JdbcIntegrationEnvironment;
 import util.JpaIntegrationEnvironment;
 
 import java.util.List;
@@ -35,7 +33,7 @@ public class JpaChatRepositoryTest extends JpaIntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    ChatRepository chatRepository;
+    JpaChatRepository chatRepository;
 
     @Test
     public void save__ChatDoesntExistInDb_addedChat() {

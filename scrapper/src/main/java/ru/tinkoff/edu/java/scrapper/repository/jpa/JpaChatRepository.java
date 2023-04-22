@@ -4,12 +4,10 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +15,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JpaChatRepository implements ChatRepository {
 
-//    @PersistenceContext
+    private static final String SELECT_ALL = """
+            SELECT c FROM Chat c
+            """;
+
+    @PersistenceContext
     private final EntityManager entityManager;
 
     @Override
@@ -27,7 +29,7 @@ public class JpaChatRepository implements ChatRepository {
 
     @Override
     public List<Chat> findAll() {
-        TypedQuery<Chat> query = entityManager.createQuery("SELECT c FROM Chat c", Chat.class);
+        TypedQuery<Chat> query = entityManager.createQuery(SELECT_ALL, Chat.class);
         return query.getResultList();
     }
 

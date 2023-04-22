@@ -6,8 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
 
@@ -19,12 +17,12 @@ public class JdbcAccessConfiguration {
     private final JdbcTemplate jdbcTemplate;
 
     @Bean
-    public LinkRepository linkRepository() {
+    public JdbcLinkRepository linkRepository() {
         return new JdbcLinkRepository(jdbcTemplate);
     }
 
     @Bean
-    public ChatRepository chatRepository() {
+    public JdbcChatRepository chatRepository() {
         return new JdbcChatRepository(jdbcTemplate);
     }
 }

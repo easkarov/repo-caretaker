@@ -1,6 +1,7 @@
 package ru.tinkoff.edu.java.scrapper.jpa;
 
 
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaLinkRepository;
-import util.JdbcIntegrationEnvironment;
 import util.JpaIntegrationEnvironment;
 
 import java.time.OffsetDateTime;
@@ -36,7 +35,10 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    LinkRepository linkRepository;
+    EntityManager entityManager;
+
+    @Autowired
+    JpaLinkRepository linkRepository;
 
     @Test
     public void save__linkUrlDoesntExistInDb_addedLink() {
@@ -47,8 +49,11 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
         var savedLink = linkRepository.save(link);
 
         // then
-        Link realSavedLink = jdbcTemplate.queryForObject(LinkQuery.SELECT_BY_URL.query(),
-                new BeanPropertyRowMapper<>(Link.class), link.getUrl());
+        entityManager.flush();
+
+        var q = entityManager.createQuery("SELECT l FROM Link l WHERE l.url = :url", Link.class);
+        q.setParameter("url", link.getUrl());
+        var realSavedLink = q.getSingleResult();
 
         assertThat(realSavedLink).isNotNull();
         assertAll(

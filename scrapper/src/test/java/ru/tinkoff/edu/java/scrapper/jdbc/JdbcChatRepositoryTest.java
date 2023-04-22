@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper;
+package ru.tinkoff.edu.java.scrapper.jdbc;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,9 @@ import ru.tinkoff.edu.java.scrapper.enums.ChatQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
 import util.IntegrationEnvironment;
+import util.JdbcIntegrationEnvironment;
 
 import java.util.List;
 
@@ -26,10 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
-@SpringBootTest
 @Transactional
 @Rollback
-public class JdbcChatRepositoryTest extends IntegrationEnvironment {
+public class JdbcChatRepositoryTest extends JdbcIntegrationEnvironment {
 
     @Autowired
     JdbcTemplate jdbcTemplate;

@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper;
+package ru.tinkoff.edu.java.scrapper.jdbc;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -19,6 +20,7 @@ import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
 import util.IntegrationEnvironment;
+import util.JdbcIntegrationEnvironment;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -28,10 +30,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
-@SpringBootTest
 @Transactional
 @Rollback
-public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
+public class JdbcLinkRepositoryTest extends JdbcIntegrationEnvironment {
 
     @Autowired
     JdbcTemplate jdbcTemplate;

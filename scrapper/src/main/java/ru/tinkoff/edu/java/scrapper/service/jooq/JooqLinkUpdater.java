@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.service;
+package ru.tinkoff.edu.java.scrapper.service.jooq;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,8 +23,9 @@ import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.GithubUpdateData;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.model.SOFUpdateData;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqLinkRepository;
+import ru.tinkoff.edu.java.scrapper.service.LinkUpdater;
 
 import java.net.URI;
 import java.time.Duration;
@@ -39,10 +40,10 @@ import static java.util.Map.Entry;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class LinkUpdaterImpl implements LinkUpdater {
+public class JooqLinkUpdater implements LinkUpdater {
 
-    private final LinkRepository linkRepository;
-    private final ChatRepository chatRepository;
+    private final JooqLinkRepository linkRepository;
+    private final JooqChatRepository chatRepository;
 
     private final BotClient botClient;
     private final GitHubClient gitHubClient;

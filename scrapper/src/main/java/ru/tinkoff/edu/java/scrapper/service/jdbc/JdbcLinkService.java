@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.service;
+package ru.tinkoff.edu.java.scrapper.service.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,8 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.exception.NotFoundException;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
+import ru.tinkoff.edu.java.scrapper.service.LinkService;
 
 import java.util.List;
 
@@ -16,10 +17,10 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LinkServiceImpl implements LinkService {
+public class JdbcLinkService implements LinkService {
 
-    private final LinkRepository linkRepository;
-    private final ChatRepository chatRepository;
+    private final JdbcLinkRepository linkRepository;
+    private final JdbcChatRepository chatRepository;
 
     @Transactional
     @Override

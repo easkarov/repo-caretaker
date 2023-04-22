@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,9 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.ChatQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
-import util.IntegrationEnvironment;
 import util.JdbcIntegrationEnvironment;
 
 import java.util.List;
@@ -36,7 +33,7 @@ public class JdbcChatRepositoryTest extends JdbcIntegrationEnvironment {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    ChatRepository chatRepository;
+    JdbcChatRepository chatRepository;
 
     @Test
     public void save__ChatDoesntExistInDb_addedChat() {

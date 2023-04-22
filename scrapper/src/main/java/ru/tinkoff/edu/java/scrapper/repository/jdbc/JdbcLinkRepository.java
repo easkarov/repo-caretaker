@@ -68,7 +68,8 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public boolean addToChat(Chat chat, Link link) {
-        var ifExists = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(), boolean.class, chat, link);
+        var ifExists = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(),
+                boolean.class, chat.getId(), link.getId());
         if (ifExists == null || ifExists) return false;
         jdbcTemplate.update(LinkQuery.ADD_TO_CHAT.query(), chat.getId(), link.getId());
         return true;
@@ -81,7 +82,7 @@ public class JdbcLinkRepository implements LinkRepository {
 
     @Override
     public boolean removeFromChat(Chat chat, Link link) {
-        return jdbcTemplate.update(LinkQuery.REMOVE_FROM_CHAT.query(), chat, link) >= 1;
+        return jdbcTemplate.update(LinkQuery.REMOVE_FROM_CHAT.query(), chat.getId(), link.getId()) >= 1;
     }
 
     private Link mapRowToLink(ResultSet row, int rowNum) throws SQLException {

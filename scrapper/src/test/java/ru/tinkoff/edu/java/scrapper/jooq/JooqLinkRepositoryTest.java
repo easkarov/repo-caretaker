@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.jpa;
+package ru.tinkoff.edu.java.scrapper.jooq;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,7 @@ import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
-import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaLinkRepository;
-import util.JdbcIntegrationEnvironment;
+import util.JooqIntegrationEnvironment;
 import util.JpaIntegrationEnvironment;
 
 import java.time.OffsetDateTime;
@@ -30,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Slf4j
 @Transactional
 @Rollback
-public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
+public class JooqLinkRepositoryTest extends JooqIntegrationEnvironment {
 
     @Autowired
     JdbcTemplate jdbcTemplate;

@@ -91,7 +91,7 @@ public class JooqLinkRepository implements LinkRepository {
                 .where(CHAT_LINK.CHAT_ID.eq(chat.getId()), CHAT_LINK.LINK_ID.eq(link.getId()))
                 .fetchOptional().isPresent();
         return !ifExists && dsl.insertInto(CHAT_LINK, CHAT_LINK.fields())
-                .values(chat, link)
+                .values(chat.getId(), link.getId())
                 .execute() == 1;
     }
 

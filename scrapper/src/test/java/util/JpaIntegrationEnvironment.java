@@ -11,6 +11,7 @@ import ru.tinkoff.edu.java.scrapper.configuration.ApplicationProperties;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest
 public class JpaIntegrationEnvironment extends IntegrationEnvironment {
+
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {
         registry.add("app.database-access-type", () -> ApplicationProperties.AccessType.JPA);

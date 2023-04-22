@@ -36,7 +36,7 @@ public class JpaChatRepositoryTest extends JpaIntegrationEnvironment {
     JpaChatRepository chatRepository;
 
     @Test
-    public void save__ChatDoesntExistInDb_addedChat() {
+    public void save__chatDoesntExistInDb_addedChat() {
         // given
         var chat = new Chat().setId(444L);
 
@@ -56,7 +56,7 @@ public class JpaChatRepositoryTest extends JpaIntegrationEnvironment {
 
     @Test
     @Sql("/sql/fill_in_chats.sql")
-    public void save__ChatAlreadyExistsInDb_throwException() {
+    public void save__chatAlreadyExistsInDb_throwException() {
         // given
         var chat = new Chat().setId(1L);
 

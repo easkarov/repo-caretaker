@@ -2,11 +2,13 @@ package ru.tinkoff.edu.java.scrapper.jpa;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -51,9 +53,9 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
         // then
         entityManager.flush();
 
-        var q = entityManager.createQuery("SELECT l FROM Link l WHERE l.url = :url", Link.class);
-        q.setParameter("url", link.getUrl());
-        var realSavedLink = q.getSingleResult();
+        var query = entityManager.createQuery("SELECT l FROM Link l WHERE l.url = :url", Link.class);
+        query.setParameter("url", link.getUrl());
+        var realSavedLink = query.getSingleResult();
 
         assertThat(realSavedLink).isNotNull();
         assertAll(
@@ -68,16 +70,21 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
     public void save__linkUrlAlreadyExistsInDb_throwException() {
         // given
         var link = new Link().setUrl("https://stackoverflow.com/7777777");
+        linkRepository.save(link);
 
         // when, then
-        assertThrows(DataIntegrityViolationException.class, () -> linkRepository.save(link));
+        assertThrows(PersistenceException.class, () -> entityManager.flush());
     }
 
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     @ParameterizedTest
     @ValueSource(longs = {2222, 2223})
-    public void removeById__LinkIsBeingTrackedInChat_throwException(long linkId) {
-        assertThrows(DataIntegrityViolationException.class, () -> linkRepository.removeById(linkId));
+    public void removeById__linkIsBeingTrackedInChat_throwException(long linkId) {
+        // when
+        linkRepository.removeById(linkId);
+
+        // then
+        assertThrows(PersistenceException.class, () -> entityManager.flush());
     }
 
     @Test
@@ -88,10 +95,13 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
 
         // when
         var ifRemoved = linkRepository.removeById(linkId);
+        entityManager.flush();
 
         // then
-        List<Link> removedLink = jdbcTemplate.query(LinkQuery.SELECT_BY_ID.query(),
-                new BeanPropertyRowMapper<>(Link.class), linkId);
+        var query = entityManager.createQuery("SELECT l FROM Link l WHERE l.id = :id", Link.class);
+        query.setParameter("id", linkId);
+        var removedLink = query.getResultList();
+
         assertAll(
                 () -> assertThat(ifRemoved).isTrue(),
                 () -> assertThat(removedLink).hasSize(0)
@@ -105,8 +115,8 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
         List<Link> links = linkRepository.findAll();
 
         // then
-        List<Link> realLinks = jdbcTemplate.query(LinkQuery.SELECT_ALL.query(),
-                new BeanPropertyRowMapper<>(Link.class));
+        List<Link> realLinks = entityManager.createQuery("FROM Link", Link.class).getResultList();
+
         assertThat(links).hasSameSizeAs(realLinks);
     }
 
@@ -123,12 +133,15 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
     @ValueSource(longs = {1, 2, 3, 4})
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void findAllByChat__chatHasSomeLinks_correctLinkSizeList(long chatId) {
+        var chat = entityManager.find(Chat.class, chatId);
+
         // when
-        List<Link> links = linkRepository.findAllByChat(new Chat().setId(chatId));
+        List<Link> links = linkRepository.findAllByChat(chat);
 
         // then
-        List<Link> realLinks = jdbcTemplate.query(LinkQuery.SELECT_BY_CHAT.query(),
-                new BeanPropertyRowMapper<>(Link.class), chatId);
+        var query = entityManager.createQuery("SELECT l FROM Link l JOIN FETCH l.chats c WHERE c.id = :id", Link.class);
+        query.setParameter("id", chatId);
+        List<Link> realLinks = query.getResultList();
 
         assertThat(links).hasSameSizeAs(realLinks);
     }
@@ -137,32 +150,37 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void addToChat__chatAlreadyHasLink_returnFalse() {
         // given
-        var chat = new Chat().setId(1L);
-        var link = new Link().setId(2222L);
+        var chat = entityManager.find(Chat.class, 1L);
+        var link = entityManager.find(Link.class, 2222L);
 
         // when
         Boolean ifAdded = linkRepository.addToChat(chat, link);
+        entityManager.flush();
 
         // then
-        assertThat(ifAdded).isFalse();
+        assertAll(
+                () -> assertThat(ifAdded).isFalse(),
+                () -> assertThat(chat.getLinks()).contains(link),
+                () -> assertThat(link.getChats()).contains(chat)
+        );
     }
 
     @Test
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void addToChat__chatDoesntHaveLink_addedLinkToChat() {
         // given
-        var chat = new Chat().setId(1L);
-        var link = new Link().setId(2224L);
+        var chat = entityManager.find(Chat.class, 1L);
+        var link = entityManager.find(Link.class, 2224L);
 
         // when
         Boolean ifAdded = linkRepository.addToChat(chat, link);
+        entityManager.flush();
 
         // then
-        Boolean existsInChat = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(),
-                Boolean.class, chat.getId(), link.getId());
         assertAll(
                 () -> assertThat(ifAdded).isTrue(),
-                () -> assertThat(existsInChat).isTrue()
+                () -> assertThat(chat.getLinks()).contains(link),
+                () -> assertThat(link.getChats()).contains(chat)
         );
     }
 
@@ -170,18 +188,19 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void removeFromChat__chatHaveLink_returnTrue() {
         // given
-        var chat = new Chat().setId(1L);
-        var link = new Link().setId(2222L);
+
+        var chat = entityManager.find(Chat.class, 1L);
+        var link = entityManager.find(Link.class, 2222L);
 
         // when
         Boolean ifRemoved = linkRepository.removeFromChat(chat, link);
+        entityManager.flush();
 
         // then
-        Boolean existsInChat = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(),
-                Boolean.class, chat.getId(), link.getId());
         assertAll(
                 () -> assertThat(ifRemoved).isTrue(),
-                () -> assertThat(existsInChat).isFalse()
+                () -> assertThat(chat.getLinks()).doesNotContain(link),
+                () -> assertThat(link.getChats()).doesNotContain(chat)
         );
     }
 
@@ -189,14 +208,19 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void removeFromChat__chatDoesntHaveLink_returnFalse() {
         // given
-        var chat = new Chat().setId(1L);
-        var link = new Link().setId(2224L);
+        var chat = entityManager.find(Chat.class, 1L);
+        var link = entityManager.find(Link.class, 2224L);
 
         // when
         Boolean ifRemoved = linkRepository.removeFromChat(chat, link);
+        entityManager.flush();
 
         // then
-        assertThat(ifRemoved).isFalse();
+        assertAll(
+                () -> assertThat(ifRemoved).isFalse(),
+                () -> assertThat(chat.getLinks()).doesNotContain(link),
+                () -> assertThat(link.getChats()).doesNotContain(chat)
+        );
     }
 
     @ParameterizedTest
@@ -210,8 +234,9 @@ public class JpaLinkRepositoryTest extends JpaIntegrationEnvironment {
         List<Link> links = linkRepository.findLeastRecentlyUpdated(dateTime);
 
         // then
-        List<Link> realLinks = jdbcTemplate.query(LinkQuery.SELECT_LEAST_RECENTLY_UPDATED.query(),
-                new BeanPropertyRowMapper<>(Link.class), dateTime);
+        var query = entityManager.createQuery("SELECT l FROM Link l WHERE l.updatedAt < :date", Link.class);
+        query.setParameter("date", dateTime);
+        List<Link> realLinks = query.getResultList();
 
         assertThat(links).hasSameSizeAs(realLinks);
     }

@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.configuration.database;
+package ru.tinkoff.edu.java.scrapper.configuration;
 
 
 import jakarta.persistence.EntityManager;

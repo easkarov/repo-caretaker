@@ -2,7 +2,6 @@ package util;
 
 
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.boot.test.autoconfigure.jooq.JooqTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import ru.tinkoff.edu.java.scrapper.configuration.ApplicationProperties;
-import ru.tinkoff.edu.java.scrapper.configuration.database.JooqAccessConfiguration;
+import ru.tinkoff.edu.java.scrapper.configuration.JooqAccessConfiguration;
 
 import javax.sql.DataSource;
 

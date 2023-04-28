@@ -25,6 +25,7 @@ import ru.tinkoff.edu.java.scrapper.model.GithubUpdateData;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.model.SOFUpdateData;
 import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaLinkRepository;
+import ru.tinkoff.edu.java.scrapper.service.BotNotifier;
 import ru.tinkoff.edu.java.scrapper.service.LinkUpdater;
 
 import java.net.URI;
@@ -45,9 +46,11 @@ public class JpaLinkUpdater implements LinkUpdater {
 
     private final JpaLinkRepository linkRepository;
 
-    private final BotClient botClient;
     private final GitHubClient gitHubClient;
+
     private final StackOverflowClient stackOverflowClient;
+
+    private final BotNotifier botNotifier;
 
     @Value("#{@linkUpdateAge}")
     private final Duration updateAge;
@@ -72,7 +75,7 @@ public class JpaLinkUpdater implements LinkUpdater {
         }
 
         updatedLinks.forEach(pair -> linkRepository.save(pair.getKey()));
-        notifyBot(updatedLinks);
+        botNotifier.notify(updatedLinks.stream().map(this::convertToUpdate).toList());
     }
 
     @SneakyThrows
@@ -148,17 +151,4 @@ public class JpaLinkUpdater implements LinkUpdater {
     }
 
 
-    @Override
-    public void notifyBot(List<Entry<Link, String>> linkPairs) {
-        for (var pair : linkPairs) {
-            var link = pair.getKey();
-            LinkUpdate update = LinkUpdate.builder()
-                    .id(link.getId())
-                    .description(pair.getValue())
-                    .tgChatIds(link.getChats().stream().map(Chat::getId).toList())
-                    .url(URI.create(link.getUrl()))
-                    .build();
-            botClient.sendUpdate(update);
-        }
-    }
 }

@@ -11,11 +11,21 @@ import java.time.Duration;
 public record ApplicationProperties(
         @NotNull Scheduler scheduler,
         @NotNull Duration linkUpdateAge,
-        @NotNull AccessType databaseAccessType
+        @NotNull AccessType databaseAccessType,
+        @NotNull boolean useQueue,
+        @NotNull RabbitMQProperties rabbitmq
 ) {
-    public record Scheduler(Duration interval) {}
+    public record Scheduler(Duration interval) {
+    }
 
     public enum AccessType {
         JDBC, JPA, JOOQ
+    }
+
+    public record RabbitMQProperties(
+            String exchange,
+            String queue,
+            String bind
+    ) {
     }
 }

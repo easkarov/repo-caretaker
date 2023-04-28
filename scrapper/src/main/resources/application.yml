@@ -23,7 +23,13 @@ app:
   scheduler:
     interval: 15S
   link-update-age: 15S
-  database-access-type: jpa
+  database-access-type: jdbc
+  use-queue: true
+  rabbitmq:
+    exchange: bot.exchange
+    queue: bot.queue
+    bind: bot
+
 
 server:
   port: 8080

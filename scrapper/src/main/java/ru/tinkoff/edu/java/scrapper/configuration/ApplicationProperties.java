@@ -13,9 +13,9 @@ public record ApplicationProperties(
         @NotNull Duration linkUpdateAge,
         @NotNull AccessType databaseAccessType
 ) {
-    record Scheduler(Duration interval) {}
+    public record Scheduler(Duration interval) {}
 
-    enum AccessType {
+    public enum AccessType {
         JDBC, JPA, JOOQ
     }
 }

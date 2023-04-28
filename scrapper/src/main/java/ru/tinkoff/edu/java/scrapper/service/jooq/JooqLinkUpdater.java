@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper.service;
+package ru.tinkoff.edu.java.scrapper.service.jooq;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.parser.GitHubParser;
@@ -23,8 +24,9 @@ import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.GithubUpdateData;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.model.SOFUpdateData;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqLinkRepository;
+import ru.tinkoff.edu.java.scrapper.service.LinkUpdater;
 
 import java.net.URI;
 import java.time.Duration;
@@ -36,13 +38,14 @@ import java.util.Optional;
 
 import static java.util.Map.Entry;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
-public class LinkUpdaterImpl implements LinkUpdater {
+@ConditionalOnProperty(prefix = "app", name = "database-access-type", havingValue = "jooq")
+public class JooqLinkUpdater implements LinkUpdater {
 
-    private final LinkRepository linkRepository;
-    private final ChatRepository chatRepository;
+    private final JooqLinkRepository linkRepository;
+    private final JooqChatRepository chatRepository;
 
     private final BotClient botClient;
     private final GitHubClient gitHubClient;
@@ -70,6 +73,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
             }
         }
 
+        log.info(updatedLinks.toString());
         updatedLinks.forEach(pair -> linkRepository.save(pair.getKey()));
         notifyBot(updatedLinks);
     }
@@ -151,7 +155,7 @@ public class LinkUpdaterImpl implements LinkUpdater {
     public void notifyBot(List<Entry<Link, String>> linkPairs) {
         for (var pair : linkPairs) {
             var link = pair.getKey();
-            List<Chat> linkChats = chatRepository.findAllByLink(link.getId());
+            List<Chat> linkChats = chatRepository.findAllByLink(link);
             LinkUpdate update = LinkUpdate.builder()
                     .id(link.getId())
                     .description(pair.getValue())

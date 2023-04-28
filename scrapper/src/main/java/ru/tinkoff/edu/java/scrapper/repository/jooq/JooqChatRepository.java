@@ -2,9 +2,9 @@ package ru.tinkoff.edu.java.scrapper.repository.jooq;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
+import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
 
 import java.util.List;
@@ -14,6 +14,8 @@ import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.Chat.CHAT;
 import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.ChatLink.CHAT_LINK;
 
 
+
+//@Repository
 @RequiredArgsConstructor
 public class JooqChatRepository implements ChatRepository {
     private final DSLContext dsl;
@@ -29,12 +31,12 @@ public class JooqChatRepository implements ChatRepository {
     }
 
     @Override
-    public List<Chat> findAllByLink(long linkId) {
+    public List<Chat> findAllByLink(Link link) {
         return dsl.select(CHAT.fields())
                 .from(CHAT)
                 .join(CHAT_LINK)
                 .on(CHAT.ID.eq(CHAT_LINK.CHAT_ID))
-                .where(CHAT_LINK.LINK_ID.eq(linkId))
+                .where(CHAT_LINK.LINK_ID.eq(link.getId()))
                 .fetchInto(Chat.class);
     }
 

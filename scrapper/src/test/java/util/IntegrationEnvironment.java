@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.sql.SQLException;
 
-@Testcontainers
+//@Testcontainers
 public abstract class IntegrationEnvironment {
 
     protected static final PostgreSQLContainer<?> DB_CONTAINER;

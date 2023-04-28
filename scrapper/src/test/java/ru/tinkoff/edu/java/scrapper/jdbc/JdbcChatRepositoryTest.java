@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper;
+package ru.tinkoff.edu.java.scrapper.jdbc;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,8 +14,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.ChatQuery;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
-import util.IntegrationEnvironment;
+import ru.tinkoff.edu.java.scrapper.model.Link;
+import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
+import util.JdbcIntegrationEnvironment;
 
 import java.util.List;
 
@@ -25,16 +25,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
-@SpringBootTest
 @Transactional
 @Rollback
-public class JdbcChatRepositoryTest extends IntegrationEnvironment {
+public class JdbcChatRepositoryTest extends JdbcIntegrationEnvironment {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    ChatRepository chatRepository;
+    JdbcChatRepository chatRepository;
 
     @Test
     public void save__ChatDoesntExistInDb_addedChat() {
@@ -118,7 +117,7 @@ public class JdbcChatRepositoryTest extends IntegrationEnvironment {
     @ValueSource(longs = {2222, 2224, 2223})
     public void findAllByLink__chatHasSomeTrackedLinks_correctChatListSize(long linkId) {
         // when
-        List<Chat> chats = chatRepository.findAllByLink(linkId);
+        List<Chat> chats = chatRepository.findAllByLink(new Link().setId(linkId));
         // then
         List<Chat> realChats = jdbcTemplate.query(ChatQuery.SELECT_BY_LINK.query(),
                 new BeanPropertyRowMapper<>(Chat.class), linkId);

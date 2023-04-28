@@ -1,4 +1,4 @@
-package ru.tinkoff.edu.java.scrapper;
+package ru.tinkoff.edu.java.scrapper.jooq;
 
 
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,10 +13,10 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.enums.LinkQuery;
+import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
-import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
-import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
-import util.IntegrationEnvironment;
+import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqLinkRepository;
+import util.JooqIntegrationEnvironment;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -27,16 +26,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
-@SpringBootTest
 @Transactional
 @Rollback
-public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
+public class JooqLinkRepositoryTest extends JooqIntegrationEnvironment {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    LinkRepository linkRepository;
+    JooqLinkRepository linkRepository;
 
     @Test
     public void save__linkUrlDoesntExistInDb_addedLink() {
@@ -119,7 +117,7 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void findAllByChat__chatHasSomeLinks_correctLinkSizeList(long chatId) {
         // when
-        List<Link> links = linkRepository.findAllByChat(chatId);
+        List<Link> links = linkRepository.findAllByChat(new Chat().setId(chatId));
 
         // then
         List<Link> realLinks = jdbcTemplate.query(LinkQuery.SELECT_BY_CHAT.query(),
@@ -132,11 +130,11 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void addToChat__chatAlreadyHasLink_returnFalse() {
         // given
-        var chatId = 1;
-        var linkId = 2222;
+        var chat = new Chat().setId(1L);
+        var link = new Link().setId(2222L);
 
         // when
-        Boolean ifAdded = linkRepository.addToChat(chatId, linkId);
+        Boolean ifAdded = linkRepository.addToChat(chat, link);
 
         // then
         assertThat(ifAdded).isFalse();
@@ -146,15 +144,15 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void addToChat__chatDoesntHaveLink_addedLinkToChat() {
         // given
-        var chatId = 1;
-        var linkId = 2224;
+        var chat = new Chat().setId(1L);
+        var link = new Link().setId(2224L);
 
         // when
-        Boolean ifAdded = linkRepository.addToChat(chatId, linkId);
+        Boolean ifAdded = linkRepository.addToChat(chat, link);
 
         // then
         Boolean existsInChat = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(),
-                Boolean.class, chatId, linkId);
+                Boolean.class, chat.getId(), link.getId());
         assertAll(
                 () -> assertThat(ifAdded).isTrue(),
                 () -> assertThat(existsInChat).isTrue()
@@ -165,15 +163,15 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void removeFromChat__chatHaveLink_returnTrue() {
         // given
-        var chatId = 1;
-        var linkId = 2222;
+        var chat = new Chat().setId(1L);
+        var link = new Link().setId(2222L);
 
         // when
-        Boolean ifRemoved = linkRepository.removeFromChat(chatId, linkId);
+        Boolean ifRemoved = linkRepository.removeFromChat(chat, link);
 
         // then
         Boolean existsInChat = jdbcTemplate.queryForObject(LinkQuery.EXISTS_IN_CHAT.query(),
-                Boolean.class, chatId, linkId);
+                Boolean.class, chat.getId(), link.getId());
         assertAll(
                 () -> assertThat(ifRemoved).isTrue(),
                 () -> assertThat(existsInChat).isFalse()
@@ -184,11 +182,11 @@ public class JdbcLinkRepositoryTest extends IntegrationEnvironment {
     @Sql("/sql/fill_in_chat_link_pairs.sql")
     public void removeFromChat__chatDoesntHaveLink_returnFalse() {
         // given
-        var chatId = 1;
-        var linkId = 2224;
+        var chat = new Chat().setId(1L);
+        var link = new Link().setId(2224L);
 
         // when
-        Boolean ifRemoved = linkRepository.removeFromChat(chatId, linkId);
+        Boolean ifRemoved = linkRepository.removeFromChat(chat, link);
 
         // then
         assertThat(ifRemoved).isFalse();

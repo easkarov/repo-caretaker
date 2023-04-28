@@ -1,25 +1,24 @@
-package ru.tinkoff.edu.java.scrapper.service;
+package ru.tinkoff.edu.java.scrapper.service.jpa;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
-import ru.tinkoff.edu.java.scrapper.repository.ChatRepository;
+import ru.tinkoff.edu.java.scrapper.repository.jpa.JpaChatRepository;
+import ru.tinkoff.edu.java.scrapper.service.ChatService;
 
 
-@Service
 @Slf4j
 @RequiredArgsConstructor
-public class ChatServiceImpl implements ChatService {
+public class JpaChatService implements ChatService {
 
-    private final ChatRepository chatRepository;
+    private final JpaChatRepository chatRepository;
 
     @Transactional
     @Override
     public void register(long chatId) {
         if (chatRepository.findById(chatId).isEmpty()) {
-            chatRepository.save(new Chat(chatId));
+            chatRepository.save(new Chat().setId(chatId));
             log.info("Chat with %s ID was registered".formatted(chatId));
         }
     }
@@ -27,6 +26,6 @@ public class ChatServiceImpl implements ChatService {
     @Transactional
     @Override
     public void unregister(long chatId) {
-        chatRepository.removeById(chatId);
+        chatRepository.deleteById(chatId);
     }
 }

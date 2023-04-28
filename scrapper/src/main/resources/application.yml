@@ -5,6 +5,17 @@ spring:
     password: password
     driver-class-name: org.postgresql.Driver
 
+  jpa:
+    hibernate:
+      ddl-auto: none
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
   liquibase:
     enabled: false
 
@@ -12,7 +23,7 @@ app:
   scheduler:
     interval: 15S
   link-update-age: 15S
-  database-access-type: jdbc
+  database-access-type: jpa
 
 server:
   port: 8080
@@ -30,4 +41,3 @@ github-client:
 stackoverflow-client:
   base-url: https://api.stackexchange.com/2.3
   api-key: ${STACKOVERFLOW_API_KEY}
-

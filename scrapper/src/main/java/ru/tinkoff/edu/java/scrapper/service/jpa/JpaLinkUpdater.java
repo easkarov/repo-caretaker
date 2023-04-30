@@ -16,7 +16,6 @@ import ru.tinkoff.edu.java.parser.StackOverflowParser;
 import ru.tinkoff.edu.java.parser.response.GitHubParsingResponse;
 import ru.tinkoff.edu.java.parser.response.ParsingResponse;
 import ru.tinkoff.edu.java.parser.response.StackOverflowParsingResponse;
-import ru.tinkoff.edu.java.scrapper.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
@@ -46,11 +45,11 @@ public class JpaLinkUpdater implements LinkUpdater {
 
     private final JpaLinkRepository linkRepository;
 
+    private final BotNotifier botNotifier;
+
     private final GitHubClient gitHubClient;
 
     private final StackOverflowClient stackOverflowClient;
-
-    private final BotNotifier botNotifier;
 
     @Value("#{@linkUpdateAge}")
     private final Duration updateAge;
@@ -75,7 +74,7 @@ public class JpaLinkUpdater implements LinkUpdater {
         }
 
         updatedLinks.forEach(pair -> linkRepository.save(pair.getKey()));
-        botNotifier.notify(updatedLinks.stream().map(this::convertToUpdate).toList());
+        notifyBot(updatedLinks);
     }
 
     @SneakyThrows
@@ -151,4 +150,17 @@ public class JpaLinkUpdater implements LinkUpdater {
     }
 
 
+    @Override
+    public void notifyBot(List<Entry<Link, String>> linkPairs) {
+        for (var pair : linkPairs) {
+            var link = pair.getKey();
+            LinkUpdate update = LinkUpdate.builder()
+                    .id(link.getId())
+                    .description(pair.getValue())
+                    .tgChatIds(link.getChats().stream().map(Chat::getId).toList())
+                    .url(URI.create(link.getUrl()))
+                    .build();
+            botNotifier.notify(update);
+        }
+    }
 }

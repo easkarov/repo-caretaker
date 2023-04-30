@@ -8,12 +8,10 @@ import org.springframework.stereotype.Service;
 import ru.tinkoff.edu.java.scrapper.configuration.ApplicationProperties;
 import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 
-import java.util.List;
-
 
 @Slf4j
-@ConditionalOnProperty(prefix = "app", name = "use-queue", havingValue = "true")
 @Service
+@ConditionalOnProperty(prefix = "app", name = "use-queue", havingValue = "true")
 @RequiredArgsConstructor
 public class QueueBotNotifier implements BotNotifier {
 
@@ -22,11 +20,9 @@ public class QueueBotNotifier implements BotNotifier {
     private final RabbitTemplate rabbitTemplate;
 
     @Override
-    public void notify(List<LinkUpdate> updates) {
+    public void notify(LinkUpdate update) {
         log.info("Sending message through Queue");
         rabbitTemplate.setExchange(properties.rabbitmq().exchange());
-        for (var update : updates) {
-            rabbitTemplate.convertAndSend(properties.rabbitmq().bind(), update);
-        }
+        rabbitTemplate.convertAndSend(properties.rabbitmq().key(), update);
     }
 }

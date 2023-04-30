@@ -9,11 +9,10 @@ import ru.tinkoff.edu.java.bot.client.ScrapperClient;
 @Configuration
 @RequiredArgsConstructor
 public class ClientConfiguration {
-    private final ApplicationConfig applicationConfig;
+    private final ApplicationProperties properties;
     @Bean
     public ScrapperClient scrapperClient() {
-        // Создаётся клиент с базовой URL из файла конфига (есть значение по умолчанию @DefaultValue)
-        return new ScrapperClient(applicationConfig.client().url());
+        return new ScrapperClient(properties.client().url());
     }
 
 }

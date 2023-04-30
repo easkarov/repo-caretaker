@@ -26,10 +26,10 @@ app:
   database-access-type: jdbc
   use-queue: true
   rabbitmq:
-    exchange: bot.exchange
-    queue: bot.queue
-    bind: bot
-
+    exchange: link-update.exchange
+    queue: new-link-update.queue
+    key: new  # new updates go to new-... queue
+    dlx: link-update.dlx
 
 server:
   port: 8080

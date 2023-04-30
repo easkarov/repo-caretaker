@@ -25,7 +25,8 @@ public record ApplicationProperties(
     public record RabbitMQProperties(
             String exchange,
             String queue,
-            String bind
+            String key,
+            String dlx
     ) {
     }
 }

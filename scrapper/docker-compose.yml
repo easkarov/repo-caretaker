@@ -42,9 +42,12 @@ services:
       - "15672:15672"
       - "5672:5672"
     restart: always
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
 
 networks:
   backend:
 
 volumes:
   pg-data:
+  rabbitmq-data:

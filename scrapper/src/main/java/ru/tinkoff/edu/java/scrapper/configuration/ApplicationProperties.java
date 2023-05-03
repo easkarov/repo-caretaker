@@ -23,10 +23,10 @@ public record ApplicationProperties(
     }
 
     public record RabbitMQProperties(
-            String exchange,
-            String queue,
-            String key,
-            String dlx
+            @NotNull String exchange,
+            @NotNull String queue,
+            @NotNull String key,
+            @NotNull String dlx
     ) {
     }
 }

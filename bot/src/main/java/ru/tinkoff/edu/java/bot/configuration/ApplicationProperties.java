@@ -14,17 +14,17 @@ public record ApplicationProperties(
         @NotNull RabbitMQProperties rabbitmq
 ) {
 
-    public record ScrapperClient(@DefaultValue("https://localhost:8000/api") String url) {
+    public record ScrapperClient(@NotNull String url) {
     }
 
-    public record Bot(String token) {
+    public record Bot(@NotNull String token) {
     }
 
     public record RabbitMQProperties(
-            String queue,
-            String key,
-            String dlq,
-            String dlx
+            @NotNull String queue,
+            @NotNull String key,
+            @NotNull String dlq,
+            @NotNull String dlx
     ) {
     }
 }

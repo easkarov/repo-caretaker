@@ -10,7 +10,7 @@ import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 
 @Slf4j
 @Service
-@ConditionalOnProperty(prefix = "app", name = "use-queue", havingValue = "false")
+@ConditionalOnProperty(prefix = "app", name = "use-queue", havingValue = "false", matchIfMissing = true)
 @RequiredArgsConstructor
 public class HttpBotNotifier implements BotNotifier {
 

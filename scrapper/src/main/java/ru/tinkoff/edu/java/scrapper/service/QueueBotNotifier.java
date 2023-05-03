@@ -22,7 +22,10 @@ public class QueueBotNotifier implements BotNotifier {
     @Override
     public void notify(LinkUpdate update) {
         log.info("Sending message through Queue");
-        rabbitTemplate.setExchange(properties.rabbitmq().exchange());
-        rabbitTemplate.convertAndSend(properties.rabbitmq().key(), update);
+        rabbitTemplate.convertAndSend(
+                properties.rabbitmq().exchange(),
+                properties.rabbitmq().key(),
+                update
+        );
     }
 }

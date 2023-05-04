@@ -1,7 +1,11 @@
 name: Bot module
 
 on:
-  [push, pull_request]:
+  push:
+    paths:
+      - 'bot/**'
+      
+  pull_request:
     paths:
       - 'bot/**'
 

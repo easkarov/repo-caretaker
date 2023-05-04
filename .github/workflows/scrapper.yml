@@ -25,4 +25,4 @@ jobs:
         run: mvn package -pl scrapper -am
 
       - name: Build  image
-        run: docker build . -t EmiAsk/scrapper:latest
+        run: docker build . -t emiask/scrapper:latest

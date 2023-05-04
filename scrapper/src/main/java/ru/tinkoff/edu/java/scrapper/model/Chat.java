@@ -2,7 +2,7 @@ package ru.tinkoff.edu.java.scrapper.model;
 
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -15,6 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Accessors(chain = true)
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Chat {
 
     @Id

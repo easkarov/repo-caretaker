@@ -12,7 +12,7 @@ on:
 env:
   registry: ghcr.io
   actor: emiask
-  image_tag: ${{ registry }}/${{ env.actor }}/bot:latest
+  image_tag: ${{ env.registry }}/${{ env.actor }}/bot:latest
 
 jobs:
   build:

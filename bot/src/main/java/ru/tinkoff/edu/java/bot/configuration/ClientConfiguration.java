@@ -12,7 +12,6 @@ public class ClientConfiguration {
     private final ApplicationConfig applicationConfig;
     @Bean
     public ScrapperClient scrapperClient() {
-        // Создаётся клиент с базовой URL из файла конфига (есть значение по умолчанию @DefaultValue)
         return new ScrapperClient(applicationConfig.client().url());
     }
 

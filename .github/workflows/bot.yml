@@ -10,9 +10,8 @@ on:
       - 'bot/**'
 
 env:
-  registry: ghcr.io
-  actor: emiask
-  image_tag: ${{ env.registry }}/${{ env.actor }}/bot:latest
+  REGISTRY: ghcr.io
+  ACTOR: emiask
 
 jobs:
   build:
@@ -30,15 +29,15 @@ jobs:
         run: mvn package -pl bot -am
 
       - name: Build  image
-        run: docker build bot/ -t ${{ env.image_tag }}
+        run: docker build bot/ -t $REGISTRY/$ACTOR/bot:latest
 
       - name: Docker login
         uses: docker/login-action@v1
         with:
-          registry: ${{ env.registry }}
-          username: ${{ env.actor }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ env.ACTOR }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push image
-        run: docker push ${{ env.image_tag }}
+        run: docker push $REGISTRY/$ACTOR/bot:latest
 

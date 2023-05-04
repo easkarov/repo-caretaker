@@ -1,13 +1,13 @@
-name: Bot module
+name: Scrapper module
 
 on:
   push:
     paths:
-      - 'bot/**'
-      
+      - 'scrapper/**'
+
   pull_request:
     paths:
-      - 'bot/**'
+      - 'scrapper/**'
 
 jobs:
   build:
@@ -22,6 +22,6 @@ jobs:
           java-version: 17
 
       - name: Maven package
-        run: mvn package -pl bot -am
+        run: mvn package -pl scrapper -am
 
 

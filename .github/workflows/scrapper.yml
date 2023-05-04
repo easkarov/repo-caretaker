@@ -26,3 +26,13 @@ jobs:
 
       - name: Build  image
         run: docker build scrapper/ -t emiask/scrapper:latest
+
+      - name: Docker login
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        run: docker push ghcr.io/${{ github.actor }}/scrapper:latest

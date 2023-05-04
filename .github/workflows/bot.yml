@@ -13,9 +13,6 @@ env:
   REGISTRY: ghcr.io
   USERNAME: emiask
 
-permissions:
-  packages: write
-
 jobs:
   build:
     runs-on: ubuntu-latest

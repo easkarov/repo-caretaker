@@ -1,5 +1,6 @@
 package ru.tinkoff.edu.java.scrapper.configuration;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -23,10 +24,10 @@ public record ApplicationProperties(
     }
 
     public record RabbitMQProperties(
-            @NotNull String exchange,
-            @NotNull String queue,
-            @NotNull String key,
-            @NotNull String dlx
+            @NotBlank String exchange,
+            @NotBlank String queue,
+            @NotBlank String key,
+            @NotBlank String dlx
     ) {
     }
 }

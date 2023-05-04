@@ -25,5 +25,5 @@ jobs:
         run: mvn package -pl bot -am
 
       - name: Build  image
-        run: docker build . -t emiask/bot:latest
+        run: docker build bot/ -t emiask/bot:latest
 

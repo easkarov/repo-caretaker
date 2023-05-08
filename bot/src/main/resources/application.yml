@@ -4,9 +4,23 @@ app:
     token: ${BOT_TOKEN}
   client:
     url: http://localhost:8080/api
+  rabbitmq:
+    queue: new-link-update.queue
+    dlq: new-link-update.dlq
+    dlx: link-update.dlx
+    key: new  # new updates go to new-... dlq
+
 
 server:
   port: 8000
+
+
+spring:
+  rabbitmq:
+    listener:
+      simple:
+        default-requeue-rejected: false
+
 
 springdoc:
   swagger-ui:

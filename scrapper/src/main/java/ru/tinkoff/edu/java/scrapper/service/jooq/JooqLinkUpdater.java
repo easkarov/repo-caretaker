@@ -16,7 +16,6 @@ import ru.tinkoff.edu.java.parser.StackOverflowParser;
 import ru.tinkoff.edu.java.parser.response.GitHubParsingResponse;
 import ru.tinkoff.edu.java.parser.response.ParsingResponse;
 import ru.tinkoff.edu.java.parser.response.StackOverflowParsingResponse;
-import ru.tinkoff.edu.java.scrapper.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
@@ -26,6 +25,7 @@ import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.model.SOFUpdateData;
 import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jooq.JooqLinkRepository;
+import ru.tinkoff.edu.java.scrapper.service.BotNotifier;
 import ru.tinkoff.edu.java.scrapper.service.LinkUpdater;
 
 import java.net.URI;
@@ -45,10 +45,13 @@ import static java.util.Map.Entry;
 public class JooqLinkUpdater implements LinkUpdater {
 
     private final JooqLinkRepository linkRepository;
+
     private final JooqChatRepository chatRepository;
 
-    private final BotClient botClient;
+    private final BotNotifier botNotifier;
+
     private final GitHubClient gitHubClient;
+
     private final StackOverflowClient stackOverflowClient;
 
     @Value("#{@linkUpdateAge}")
@@ -152,8 +155,8 @@ public class JooqLinkUpdater implements LinkUpdater {
 
 
     @Override
-    public void notifyBot(List<Entry<Link, String>> linkPairs) {
-        for (var pair : linkPairs) {
+    public void notifyBot(List<Entry<Link, String>> pairs) {
+        for (var pair : pairs) {
             var link = pair.getKey();
             List<Chat> linkChats = chatRepository.findAllByLink(link);
             LinkUpdate update = LinkUpdate.builder()
@@ -162,7 +165,7 @@ public class JooqLinkUpdater implements LinkUpdater {
                     .tgChatIds(linkChats.stream().map(Chat::getId).toList())
                     .url(URI.create(link.getUrl()))
                     .build();
-            botClient.sendUpdate(update);
+            botNotifier.notify(update);
         }
     }
 }

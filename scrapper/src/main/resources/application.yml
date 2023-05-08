@@ -23,7 +23,13 @@ app:
   scheduler:
     interval: 15S
   link-update-age: 15S
-  database-access-type: jpa
+  database-access-type: jdbc
+  use-queue: true
+  rabbitmq:
+    exchange: link-update.exchange
+    queue: new-link-update.queue
+    key: new  # new updates go to new-... queue
+    dlx: link-update.dlx
 
 server:
   port: 8080

@@ -11,7 +11,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  USERNAME: emiask
+  USERNAME: emiask  # can't use github.repository_owner because it is not lower case
 
 jobs:
   build:

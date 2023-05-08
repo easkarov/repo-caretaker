@@ -16,7 +16,6 @@ import ru.tinkoff.edu.java.parser.StackOverflowParser;
 import ru.tinkoff.edu.java.parser.response.GitHubParsingResponse;
 import ru.tinkoff.edu.java.parser.response.ParsingResponse;
 import ru.tinkoff.edu.java.parser.response.StackOverflowParsingResponse;
-import ru.tinkoff.edu.java.scrapper.client.BotClient;
 import ru.tinkoff.edu.java.scrapper.client.GitHubClient;
 import ru.tinkoff.edu.java.scrapper.client.StackOverflowClient;
 import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
@@ -26,6 +25,7 @@ import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.model.SOFUpdateData;
 import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcChatRepository;
 import ru.tinkoff.edu.java.scrapper.repository.jdbc.JdbcLinkRepository;
+import ru.tinkoff.edu.java.scrapper.service.BotNotifier;
 import ru.tinkoff.edu.java.scrapper.service.LinkUpdater;
 
 import java.net.URI;
@@ -45,11 +45,14 @@ import static java.util.Map.Entry;
 public class JdbcLinkUpdater implements LinkUpdater {
 
     private final JdbcLinkRepository linkRepository;
+
     private final JdbcChatRepository chatRepository;
 
-    private final BotClient botClient;
     private final GitHubClient gitHubClient;
+
     private final StackOverflowClient stackOverflowClient;
+
+    private final BotNotifier botNotifier;
 
     @Value("#{@linkUpdateAge}")
     private final Duration updateAge;
@@ -152,8 +155,8 @@ public class JdbcLinkUpdater implements LinkUpdater {
 
 
     @Override
-    public void notifyBot(List<Entry<Link, String>> linkPairs) {
-        for (var pair : linkPairs) {
+    public void notifyBot(List<Entry<Link, String>> pairs) {
+        for (var pair : pairs) {
             var link = pair.getKey();
             List<Chat> linkChats = chatRepository.findAllByLink(link);
             LinkUpdate update = LinkUpdate.builder()
@@ -162,7 +165,7 @@ public class JdbcLinkUpdater implements LinkUpdater {
                     .tgChatIds(linkChats.stream().map(Chat::getId).toList())
                     .url(URI.create(link.getUrl()))
                     .build();
-            botClient.sendUpdate(update);
+            botNotifier.notify(update);
         }
     }
 }

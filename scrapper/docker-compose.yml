@@ -35,8 +35,19 @@ services:
     networks:
       - backend
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    restart: always
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
 networks:
   backend:
 
 volumes:
   pg-data:
+  rabbitmq-data:

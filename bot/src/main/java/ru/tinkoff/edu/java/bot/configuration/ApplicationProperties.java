@@ -1,32 +1,29 @@
-package ru.tinkoff.edu.java.scrapper.configuration;
+package ru.tinkoff.edu.java.bot.configuration;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.Duration;
-
 @Validated
-@ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
+@ConfigurationProperties(prefix = "app")
 public record ApplicationProperties(
-        @NotNull Scheduler scheduler,
-        @NotNull Duration linkUpdateAge,
-        @NotNull AccessType databaseAccessType,
-        @NotNull boolean useQueue,
+        @NotNull String test,
+        @NotNull Bot bot,
+        @NotNull ScrapperClient client,
         @NotNull RabbitMQProperties rabbitmq
 ) {
-    public record Scheduler(Duration interval) {
+
+    public record ScrapperClient(@NotBlank String url) {
     }
 
-    public enum AccessType {
-        JDBC, JPA, JOOQ
+    public record Bot(@NotBlank String token) {
     }
 
     public record RabbitMQProperties(
-            @NotBlank String exchange,
             @NotBlank String queue,
             @NotBlank String key,
+            @NotBlank String dlq,
             @NotBlank String dlx
     ) {
     }

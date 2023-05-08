@@ -10,8 +10,12 @@ import java.util.Optional;
 
 public interface LinkRepository extends BaseRepository<Link> {
     List<Link> findAllByChat(Chat chatId);
+
     Optional<Link> findByUrl(String url);
+
     List<Link> findLeastRecentlyUpdated(OffsetDateTime oldThanDateTime);
+
     boolean removeFromChat(Chat chat, Link link);
+
     boolean addToChat(Chat chat, Link link);
 }

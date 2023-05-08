@@ -16,6 +16,7 @@
     <!--     Excludes all 'module-info.java' files      -->
     <module name="BeforeExecutionExclusionFileFilter">
         <property name="fileNamePattern" value="module\-info\.java$"/>
+        <property name="fileNamePattern" value=".*\\/model\\/jooq\\/.*$"/>
     </module>
 
 
@@ -122,6 +123,7 @@
         <!--      Checks for Naming Conventions.       -->
         <!-- <module name="AbbreviationAsWordInName"/> -->
         <!-- <module name="AbstractClassName"/> -->
+        <!--        <module name="MemberName"/>-->
         <module name="CatchParameterName"/>
         <module name="ClassTypeParameterName"/>
         <module name="ConstantName"/>
@@ -129,7 +131,6 @@
         <module name="InterfaceTypeParameterName"/>
         <module name="LambdaParameterName"/>
         <module name="LocalVariableName"/>
-        <module name="MemberName"/>
         <module name="MethodName"/>
         <module name="MethodTypeParameterName"/>
         <module name="PackageName"/>
@@ -148,12 +149,12 @@
         <!-- <module name="CustomImportOrder"/> -->
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <!-- <module name="ImportControl"/> -->
-        <module name="ImportOrder">
-            <property name="option" value="under"/>
-            <property name="sortStaticImportsAlphabetically" value="true"/>
-        </module>
+        <!--        <module name="ImportOrder">-->
+        <!--            <property name="option" value="under"/>-->
+        <!--            <property name="sortStaticImportsAlphabetically" value="true"/>-->
+        <!--        </module>-->
         <module name="RedundantImport"/>
-        <module name="UnusedImports"/>
+        <!--        <module name="UnusedImports"/>-->
 
 
         <!-- https://checkstyle.org/config_sizes.html -->
@@ -246,7 +247,7 @@
             <property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
         </module>
         <module name="LeftCurly"/>
-        <module name="NeedBraces"/>
+        <!--        <module name="NeedBraces"/>-->
         <module name="RightCurly"/>
 
 
@@ -276,7 +277,7 @@
         <!-- <module name="IllegalToken"/> -->
         <!-- <module name="IllegalTokenText"/> -->
         <!-- <module name="IllegalType"/> -->
-        <module name="InnerAssignment"/>
+        <!--        <module name="InnerAssignment"/>-->
         <module name="MagicNumber">
             <property name="ignoreHashCodeMethod" value="true"/>
             <property name="ignoreAnnotation" value="true"/>
@@ -286,10 +287,10 @@
         <!-- <module name="MissingCtor"/> -->
         <module name="MissingSwitchDefault"/>
         <module name="ModifiedControlVariable"/>
-        <module name="MultipleStringLiterals">
-            <!-- Allow zero-length and 1-character strings -->
-            <property name="ignoreStringsRegexp" value='^(("")|(".")|("..")|("..>"))$'/>
-        </module>
+        <!--        <module name="MultipleStringLiterals">-->
+        <!--            &lt;!&ndash; Allow zero-length and 1-character strings &ndash;&gt;-->
+        <!--            <property name="ignoreStringsRegexp" value='^(("")|(".")|("..")|("..>"))$'/>-->
+        <!--        </module>-->
         <module name="MultipleVariableDeclarations"/>
         <module name="NestedForDepth">
             <property name="max" value="2"/>

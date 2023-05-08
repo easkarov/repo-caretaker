@@ -1,5 +1,6 @@
 package ru.tinkoff.edu.java.bot.client;
 
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -10,15 +11,12 @@ import ru.tinkoff.edu.java.bot.dto.request.RemoveLinkRequest;
 import ru.tinkoff.edu.java.bot.dto.response.LinkResponse;
 import ru.tinkoff.edu.java.bot.dto.response.ListLinkResponse;
 
-import javax.swing.text.html.Option;
-import java.util.Optional;
-
 
 @RequiredArgsConstructor
 public class ScrapperClient {
-    private final String TG_CHAT_ENDPOINT = "/tg-chat/%s";
-    private final String LINK_ENDPOINT = "/link";
-    private final String TG_CHAT_HEADER = "Tg-Chat-Id";
+    private static final String TG_CHAT_ENDPOINT = "/tg-chat/%s";
+    private static final String LINK_ENDPOINT = "/link";
+    private static final String TG_CHAT_HEADER = "Tg-Chat-Id";
 
     private final WebClient webClient;
 

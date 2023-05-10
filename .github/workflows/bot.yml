@@ -6,6 +6,7 @@ on:
       - 'bot/**'
       - '.github/workflows/bot.yml'
 
+
 env:
   REGISTRY: ghcr.io
   USERNAME: emiask

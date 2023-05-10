@@ -1,17 +1,16 @@
 name: Scrapper module
 
 on:
-  push:
+  ['push', 'pull_request']:
     paths:
       - 'scrapper/**'
-
-  pull_request:
-    paths:
-      - 'scrapper/**'
+      - '.github/workflows/scrapper.yml'
+      - 'link-parser/**'
+      - 'scrapper-jooq/**'
 
 env:
   REGISTRY: ghcr.io
-  USERNAME: emiask  # can't use github.repository_owner because its value is not lower case
+  USERNAME: emiask
 
 jobs:
   build:

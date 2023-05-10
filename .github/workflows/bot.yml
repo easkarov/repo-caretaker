@@ -1,17 +1,15 @@
 name: Bot module
 
 on:
-  push:
+  [ 'push', 'pull_request' ]:
     paths:
       - 'bot/**'
-
-  pull_request:
-    paths:
-      - 'bot/**'
+      - '.github/workflows/bot.yml'
+      - 'link-parser/**'
 
 env:
   REGISTRY: ghcr.io
-  USERNAME: emiask  # can't use github.repository_owner because its value is not lower case
+  USERNAME: emiask
 
 jobs:
   build:

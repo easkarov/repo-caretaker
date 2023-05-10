@@ -1,5 +1,5 @@
 FROM openjdk:17
 
-COPY target/bot-1.0-SNAPSHOT.jar /app.jar
+COPY target/bot-1.0-SNAPSHOT.jar /bot.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "bot.jar"]

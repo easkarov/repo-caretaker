@@ -1,7 +1,7 @@
 name: Scrapper module
 
 on:
-  ['push', 'pull_request']:
+  push:
     paths:
       - 'scrapper/**'
       - '.github/workflows/scrapper.yml'

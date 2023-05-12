@@ -15,11 +15,40 @@ server:
   port: 8000
 
 
+management:
+
+  info:
+    env:
+      enabled: true
+
+  server:
+    port: 8001
+
+  endpoints:
+    web:
+      base-path: '/'
+      path-mapping:
+        prometheus: 'metrics'
+      exposure:
+        include: [ 'info', 'health', 'prometheus' ]
+    enabled-by-default: true
+
+  endpoint:
+    health:
+      show-details: always
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+
 spring:
   rabbitmq:
     listener:
       simple:
         default-requeue-rejected: false
+  application:
+    name: bot
 
 
 springdoc:

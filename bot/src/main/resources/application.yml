@@ -1,9 +1,8 @@
 app:
-  test: 777
   bot:
     token: ${BOT_TOKEN}
   client:
-    url: http://localhost:8080/api
+    url: http://scrapper:8080/api
   rabbitmq:
     queue: new-link-update.queue
     dlq: new-link-update.dlq
@@ -47,6 +46,9 @@ spring:
     listener:
       simple:
         default-requeue-rejected: false
+    host: rabbitmq
+    port: 5672
+
   application:
     name: bot
 

@@ -8,11 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.tinkoff.edu.java.bot.enums.State;
 import ru.tinkoff.edu.java.bot.dto.HandledUpdate;
+import ru.tinkoff.edu.java.bot.metric.ProcessedMessageMetric;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +22,7 @@ public class UpdatesHandler implements UpdatesListener {
     private final CommandsHandler commandsHandler;
     private final MessageHandler messageHandler;
     private final Map<Long, State> states = new HashMap<>();
+    private final ProcessedMessageMetric processedMessageMetric;
 
     @PostConstruct
     public void init() {
@@ -43,6 +44,7 @@ public class UpdatesHandler implements UpdatesListener {
             if (handledUpdate.request().isPresent()) {
                 bot.execute(handledUpdate.request().get());
                 states.put(chatId, handledUpdate.newState());
+                processedMessageMetric.incrementProcessedMessageCount();
                 continue;
             }
 
@@ -50,6 +52,7 @@ public class UpdatesHandler implements UpdatesListener {
             if (handledUpdate.request().isPresent()) {
                 bot.execute(handledUpdate.request().get());
                 states.put(chatId, handledUpdate.newState());
+                processedMessageMetric.incrementProcessedMessageCount();
             }
         }
 

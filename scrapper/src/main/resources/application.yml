@@ -1,9 +1,14 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/scrapper
+    url: jdbc:postgresql://postgresql:5432/scrapper
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+
   application:
     name: scrapper
 

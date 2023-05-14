@@ -84,7 +84,7 @@ services:
   bot:
     build: bot/
     environment:
-      - BOT_TOKEN=5820628616:AAGCCT7zcGhDBiAh1MlN7XQ9T0_SDg6ZD88
+      - BOT_TOKEN=${TG_BOT_TOKEN}
     networks:
       - backend
     ports:
@@ -97,7 +97,7 @@ services:
   scrapper:
     build: scrapper/
     environment:
-      - GITHUB_API_KEY=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
+      - GITHUB_API_KEY=${GITHUB_ACCESS_TOKEN}
     networks:
       - backend
     ports:

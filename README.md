@@ -49,7 +49,7 @@ To run project, type in project root:
 ```$ docker compose up```
 
 ## Usage
-> ***Following examples show how to work with Telegram Bot***
+***Following examples show how to work with Telegram Bot***
 
 ### Supported Commands:
 #### /track
@@ -73,7 +73,8 @@ To run project, type in project root:
 ![image](https://github.com/EmiAsk/repo-caretaker/assets/74973350/85d432c0-7b15-4ce1-ab0f-e225f696f70a)
 
 
-***Note: to not forget all commands listed above, the keyboard is provided:***
+### Keyboard:
+> To not forget all commands listed above, the keyboard is provided
 
 ![image](https://github.com/EmiAsk/repo-caretaker/assets/74973350/c5f94d1f-0ff9-474a-8c06-4fcbfa9df7a0)
 

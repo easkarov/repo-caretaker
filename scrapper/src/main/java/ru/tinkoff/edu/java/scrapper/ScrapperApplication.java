@@ -17,7 +17,6 @@ import ru.tinkoff.edu.java.scrapper.configuration.client.StackOverflowConfigurat
         StackOverflowConfiguration.class}
 )
 public class ScrapperApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(ScrapperApplication.class, args);
     }

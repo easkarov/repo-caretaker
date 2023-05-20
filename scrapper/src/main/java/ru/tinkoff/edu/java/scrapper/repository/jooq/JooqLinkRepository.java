@@ -1,25 +1,22 @@
 package ru.tinkoff.edu.java.scrapper.repository.jooq;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
-import org.springframework.stereotype.Repository;
 import ru.tinkoff.edu.java.scrapper.exception.DBException;
 import ru.tinkoff.edu.java.scrapper.model.Chat;
 import ru.tinkoff.edu.java.scrapper.model.Link;
 import ru.tinkoff.edu.java.scrapper.model.jooq.tables.records.LinkRecord;
 import ru.tinkoff.edu.java.scrapper.repository.LinkRepository;
-
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Optional;
-
 import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.ChatLink.CHAT_LINK;
 import static ru.tinkoff.edu.java.scrapper.model.jooq.tables.Link.LINK;
 
 
 
-//@Repository
+
 @RequiredArgsConstructor
 public class JooqLinkRepository implements LinkRepository {
     private final DSLContext dsl;

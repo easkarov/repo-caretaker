@@ -2,7 +2,12 @@ package ru.tinkoff.edu.java.scrapper.model;
 
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

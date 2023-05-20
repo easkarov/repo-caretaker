@@ -2,6 +2,7 @@ package ru.tinkoff.edu.java.bot.enums;
 
 import lombok.Getter;
 
+@Getter
 public enum Command {
     START("start", "Start bot"),
     TRACK("track", "Track link"),
@@ -9,8 +10,8 @@ public enum Command {
     UNTRACK("untrack", "Untrack link"),
     LIST("list", "List all links");
 
-    @Getter
-    private final String name, description;
+    private final String name;
+    private final String description;
 
     Command(String name, String description) {
         this.name = name;

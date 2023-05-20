@@ -1,20 +1,24 @@
 package ru.tinkoff.edu.java.scrapper.model;
 
-
-import jakarta.persistence.*;
-import lombok.Data;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "chat")
 @Getter
 @Setter
 @Accessors(chain = true)
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Chat {
 
     @Id

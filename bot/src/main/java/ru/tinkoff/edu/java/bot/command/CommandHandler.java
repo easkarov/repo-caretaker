@@ -8,9 +8,12 @@ import ru.tinkoff.edu.java.bot.enums.State;
 
 public interface CommandHandler<T extends BaseRequest<T, R>, R extends BaseResponse> {
     Command command();
+
     State state();
+
     BaseRequest<T, R> handle(Update update);
+
     default boolean canHandle(Update update) {
         return update.message().text().startsWith(command().command());
-    };
+    }
 }

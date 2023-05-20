@@ -17,6 +17,7 @@ import ru.tinkoff.edu.java.bot.service.ChatService;
 public class StartCommandHandler implements CommandHandler<SendMessage, SendResponse> {
     private final MessageSender messageSender;
     private final ChatService chatService;
+
     @Override
     public Command command() {
         return Command.START;

@@ -8,7 +8,6 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "app")
 public record ApplicationProperties(
-        @NotNull String test,
         @NotNull Bot bot,
         @NotNull ScrapperClient client,
         @NotNull RabbitMQProperties rabbitmq

@@ -63,7 +63,7 @@ public class ListCommandHandlerTest {
         SendMessage request = listCommandHandler.handle(update);
 
         // then
-        assertThat(request.getParameters().get("text")).isEqualTo("There are no tracked links :(");
+        assertThat(request.getParameters().get("text")).isEqualTo("There are no tracked links");
     }
 
     @Test
@@ -85,6 +85,6 @@ public class ListCommandHandlerTest {
         SendMessage request = listCommandHandler.handle(update);
 
         // then
-        assertThat(request.getParameters().get("text")).isEqualTo("%s\n%s".formatted(firstUrl, secondUrl));
+        assertThat(request.getParameters().get("text")).isEqualTo("Your links:\n%s\n%s".formatted(firstUrl, secondUrl));
     }
 }

@@ -11,6 +11,7 @@
 * [General info](#general-info)
 * [Technologies](#technologies)
 * [Setup](#setup)
+* [Usage](#usage)
 
 ## General info
 Telegram Bot that monitors changes in specified GitHub repositories and StackOverflow questions, and notifies you about them. Feel free to add, remove links on repos and questions, get detailed information about update including what exactly has changed (issues count, new commit and etc).
@@ -35,7 +36,7 @@ Project is created with:
 	* Maven: https://maven.apache.org/download.cgi
 	* Docker: https://www.docker.com/products/docker-desktop/
 
-* Set environment variables before running as shown in ***.env.example***
+* Set environment variables manually before running. You can find them in ***.env.example***
 
 ### Build
 To build project, type in project root:
@@ -58,5 +59,22 @@ To run project, type in project root:
 
 #### /list
 > List all tracked links
+
+![image](https://github.com/EmiAsk/repo-caretaker/assets/74973350/9ee2dcec-5af5-4fa3-9e3d-c2a01624e0f5)
+
+#### /untrack
+> Remove specified link from list
+
+![image](https://github.com/EmiAsk/repo-caretaker/assets/74973350/d736c075-23dd-44cf-9c57-3abc4b2b09e7)
+
+#### /help
+> List all supported commands with descriptions
+
+![image](https://github.com/EmiAsk/repo-caretaker/assets/74973350/85d432c0-7b15-4ce1-ab0f-e225f696f70a)
+
+
+***Note: to not forget all commands listed above, the keyboard is provided:***
+
+![image](https://github.com/EmiAsk/repo-caretaker/assets/74973350/c5f94d1f-0ff9-474a-8c06-4fcbfa9df7a0)
 
 

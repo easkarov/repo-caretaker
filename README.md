@@ -24,13 +24,23 @@ Project is created with:
 	
 ## Setup
 #### Pre-reqs:
-Make sure you have installed
+Make sure you have installed:
 1) JDK 17+: https://www.oracle.com/java/technologies/downloads/#java17
-2) 
+2) Maven: https://maven.apache.org/download.cgi
 3) Docker: https://www.docker.com/products/docker-desktop/
 
+Set environment variables: 
+
+
 #### Building
-To build program, you have to 
+To build project, type in project root:
+
+```$ mvn clean install```
+
+#### Running
+To run project, type in project root:
+
+```$ docker compose up```
 
 ```
 $ cd ../lorem

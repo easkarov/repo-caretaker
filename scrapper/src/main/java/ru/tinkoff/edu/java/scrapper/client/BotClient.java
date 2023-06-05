@@ -9,7 +9,7 @@ import ru.tinkoff.edu.java.scrapper.dto.LinkUpdate;
 
 @RequiredArgsConstructor
 public class BotClient {
-    private static final String BASE_URL = "http://localhost:8000/api/update";
+    private static final String BASE_URL = "http://bot:8000/api/update";
 
     private final WebClient webClient;
 

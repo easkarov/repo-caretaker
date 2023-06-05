@@ -1,9 +1,8 @@
 app:
-  test: 777
   bot:
     token: ${BOT_TOKEN}
   client:
-    url: http://localhost:8080/api
+    url: http://scrapper:8080/api
   rabbitmq:
     queue: new-link-update.queue
     dlq: new-link-update.dlq
@@ -15,11 +14,43 @@ server:
   port: 8000
 
 
+management:
+
+  info:
+    env:
+      enabled: true
+
+  server:
+    port: 8001
+
+  endpoints:
+    web:
+      base-path: '/'
+      path-mapping:
+        prometheus: 'metrics'
+      exposure:
+        include: [ 'info', 'health', 'prometheus' ]
+    enabled-by-default: true
+
+  endpoint:
+    health:
+      show-details: always
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+
 spring:
   rabbitmq:
     listener:
       simple:
         default-requeue-rejected: false
+    host: rabbitmq
+    port: 5672
+
+  application:
+    name: bot
 
 
 springdoc:

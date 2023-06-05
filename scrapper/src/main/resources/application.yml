@@ -1,9 +1,16 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/scrapper
+    url: jdbc:postgresql://postgresql:5432/scrapper
     username: postgres
     password: password
     driver-class-name: org.postgresql.Driver
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+
+  application:
+    name: scrapper
 
   jpa:
     hibernate:
@@ -18,6 +25,32 @@ spring:
 
   liquibase:
     enabled: false
+
+management:
+
+  info:
+    env:
+      enabled: true
+
+  server:
+    port: 8081
+
+  endpoints:
+    web:
+      base-path: '/'
+      path-mapping:
+        prometheus: 'metrics'
+      exposure:
+        include: [ 'info', 'health', 'prometheus' ]
+    enabled-by-default: true
+
+  endpoint:
+    health:
+      show-details: always
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 app:
   scheduler:

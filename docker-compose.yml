@@ -1,0 +1,120 @@
+version: '3.9'
+
+services:
+  postgresql:
+    image: postgres:15
+    container_name: db
+    environment:
+      - POSTGRES_DB=scrapper
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    restart: always
+    expose:
+      - 5432
+    networks:
+      - backend
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  liquibase-migrations:
+    image: liquibase/liquibase:4.18
+    depends_on:
+      - postgresql
+    command:
+      - --hub-mode=off
+      - --changelog-file=master.xml
+      - --driver=org.postgresql.Driver
+      - --url=jdbc:postgresql://postgresql:5432/scrapper
+      - --username=postgres
+      - --password=password
+      - update
+    volumes:
+      - ./scrapper/migrations:/liquibase/changelog
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+    restart: always
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - backend
+    healthcheck:  # healthcheck makes sure if rabbitmq started listening to port
+      test: rabbitmq-diagnostics check_port_connectivity || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - backend
+    ports:
+      - '9090:9090'
+
+  grafana:
+    image: grafana/grafana-oss
+    volumes:
+      - grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - backend
+    ports:
+      - '3000:3000'
+
+  bot:
+    build: bot/
+    environment:
+      - BOT_TOKEN=${TG_BOT_TOKEN}
+    networks:
+      - backend
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  scrapper:
+    build: scrapper/
+    environment:
+      - GITHUB_API_KEY=${GITHUB_ACCESS_TOKEN}
+    networks:
+      - backend
+    ports:
+      - '8080:8080'
+      - '8081:8081'
+    depends_on:
+      postgresql:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy  # wait for healthy condition, otherwise scrapper app falls down because rabbitmq
+    # still not started
+
+networks:
+  backend:
+
+volumes:
+  pg-data:
+  rabbitmq-data:
+  prometheus:
+  grafana:

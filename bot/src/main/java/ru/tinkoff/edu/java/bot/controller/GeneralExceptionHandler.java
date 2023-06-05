@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.tinkoff.edu.java.bot.dto.response.ApiErrorResponse;
 
-@Component
+
 @RestControllerAdvice
 public class GeneralExceptionHandler {
 

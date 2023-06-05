@@ -20,6 +20,7 @@ import ru.tinkoff.edu.java.bot.MessageHandler;
 import ru.tinkoff.edu.java.bot.UpdatesHandler;
 import ru.tinkoff.edu.java.bot.dto.HandledUpdate;
 import ru.tinkoff.edu.java.bot.enums.State;
+import ru.tinkoff.edu.java.bot.metric.ProcessedMessageMetric;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,12 +45,15 @@ public class UpdatesHandlerTest {
     @Mock
     MessageHandler messageHandler;
 
+    @Mock
+    ProcessedMessageMetric metric;
+
     @Captor
     ArgumentCaptor<SendMessage> captor;
 
     @BeforeEach
     void setup() {
-        updatesHandler = new UpdatesHandler(bot, commandsHandler, messageHandler);
+        updatesHandler = new UpdatesHandler(bot, commandsHandler, messageHandler, metric);
     }
 
     @SneakyThrows

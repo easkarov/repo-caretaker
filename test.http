@@ -23,6 +23,6 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/api/links
+POST http://localhost:8080/api/link
 Content-Type: application/json
-Tg-Chat-Id: 1df
+Tg-Chat-Id: 1
